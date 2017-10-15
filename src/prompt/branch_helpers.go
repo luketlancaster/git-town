@@ -9,7 +9,6 @@ import (
 	"github.com/Originate/git-town/src/cfmt"
 	"github.com/Originate/git-town/src/exit"
 	"github.com/Originate/git-town/src/git"
-	"github.com/Originate/git-town/src/util"
 	"github.com/fatih/color"
 )
 
@@ -23,14 +22,14 @@ type branchPromptConfig struct {
 func askForBranch(config branchPromptConfig) string {
 	for {
 		cfmt.Print(config.prompt)
-		branchName, err := parseBranch(config, util.GetUserInput())
+		branchName, err := parseBranch(config, GetUserInput())
 		if err == nil {
 			err = config.validate(branchName)
 			if err == nil {
 				return branchName
 			}
 		}
-		util.PrintError(err.Error())
+		PrintError(err.Error())
 	}
 }
 

@@ -9,6 +9,7 @@ import (
 	"github.com/Originate/git-town/src/script"
 	"github.com/Originate/git-town/src/steps"
 	"github.com/Originate/git-town/src/util"
+	"github.com/Originate/git-town/src/validation"
 	"github.com/spf13/cobra"
 )
 
@@ -59,7 +60,7 @@ func getKillConfig(args []string) (result killConfig) {
 		result.TargetBranch = args[0]
 	}
 
-	git.EnsureIsFeatureBranch(result.TargetBranch, "You can only kill feature branches.")
+	validation.EnsureIsFeatureBranch(result.TargetBranch, "You can only kill feature branches.")
 
 	result.IsTargetBranchLocal = git.HasLocalBranch(result.TargetBranch)
 	if result.IsTargetBranchLocal {
@@ -71,7 +72,7 @@ func getKillConfig(args []string) (result killConfig) {
 	}
 
 	if result.InitialBranch != result.TargetBranch {
-		git.EnsureHasBranch(result.TargetBranch)
+		validation.EnsureHasBranch(result.TargetBranch)
 	}
 
 	return

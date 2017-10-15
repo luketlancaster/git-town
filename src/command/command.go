@@ -5,7 +5,7 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/Originate/git-town/src/util"
+	"github.com/Originate/git-town/src/stringtools"
 )
 
 // Command runs commands on the command line
@@ -56,7 +56,7 @@ func (r *Command) Err() error {
 func (r *Command) OutputContainsLine(line string) bool {
 	r.Run()
 	lines := strings.Split(r.output, "\n")
-	return util.DoesStringArrayContain(lines, line)
+	return stringtools.DoesStringArrayContain(lines, line)
 }
 
 // OutputContainsText returns whether the output of this command

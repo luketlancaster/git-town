@@ -1,4 +1,4 @@
-package util
+package prompt
 
 import (
 	"bufio"
@@ -8,14 +8,9 @@ import (
 
 	"github.com/Originate/git-town/src/cfmt"
 	"github.com/Originate/git-town/src/exit"
+	"github.com/Originate/git-town/src/stringtools"
 	"github.com/fatih/color"
 )
-
-// ExitWithErrorMessage prints the given error message and terminates the application.
-func ExitWithErrorMessage(messages ...string) {
-	PrintError(messages...)
-	os.Exit(1)
-}
 
 var inputReader = bufio.NewReader(os.Stdin)
 
@@ -47,6 +42,6 @@ func PrintLabelAndValue(label, value string) {
 	labelFmt := color.New(color.Bold).Add(color.Underline)
 	_, err := labelFmt.Println(label + ":")
 	exit.On(err)
-	cfmt.Println(Indent(value, 1))
+	cfmt.Println(stringtools.Indent(value, 1))
 	fmt.Println()
 }

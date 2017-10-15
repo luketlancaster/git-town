@@ -3,6 +3,7 @@ package cmd
 import (
 	"github.com/Originate/git-town/src/cfmt"
 	"github.com/Originate/git-town/src/git"
+	"github.com/Originate/git-town/src/stringtools"
 	"github.com/Originate/git-town/src/util"
 	"github.com/spf13/cobra"
 )
@@ -19,7 +20,7 @@ The default value is false.`,
 		if len(args) == 0 {
 			printHackPushFlag()
 		} else {
-			setHackPushFlag(util.StringToBool(args[0]))
+			setHackPushFlag(stringtools.StringToBool(args[0]))
 		}
 	},
 	PreRunE: func(cmd *cobra.Command, args []string) error {

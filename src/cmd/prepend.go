@@ -8,6 +8,7 @@ import (
 	"github.com/Originate/git-town/src/script"
 	"github.com/Originate/git-town/src/steps"
 	"github.com/Originate/git-town/src/util"
+	"github.com/Originate/git-town/src/validation"
 
 	"github.com/spf13/cobra"
 )
@@ -67,8 +68,8 @@ func getPrependConfig(args []string) (result prependConfig) {
 	if git.HasRemote("origin") && !git.IsOffline() {
 		script.Fetch()
 	}
-	git.EnsureDoesNotHaveBranch(result.TargetBranch)
-	git.EnsureIsFeatureBranch(result.InitialBranch, "Only feature branches can have parent branches.")
+	validation.EnsureDoesNotHaveBranch(result.TargetBranch)
+	validation.EnsureIsFeatureBranch(result.InitialBranch, "Only feature branches can have parent branches.")
 	prompt.EnsureKnowsParentBranches([]string{result.InitialBranch})
 	result.ParentBranch = git.GetParentBranch(result.InitialBranch)
 	return

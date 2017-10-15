@@ -8,6 +8,7 @@ import (
 	"github.com/Originate/git-town/src/script"
 	"github.com/Originate/git-town/src/steps"
 	"github.com/Originate/git-town/src/util"
+	"github.com/Originate/git-town/src/validation"
 
 	"github.com/spf13/cobra"
 )
@@ -61,7 +62,7 @@ func getAppendConfig(args []string) (result appendConfig) {
 	if git.HasRemote("origin") && !git.IsOffline() {
 		script.Fetch()
 	}
-	git.EnsureDoesNotHaveBranch(result.TargetBranch)
+	validation.EnsureDoesNotHaveBranch(result.TargetBranch)
 	prompt.EnsureKnowsParentBranches([]string{result.InitialBranch})
 	return
 }

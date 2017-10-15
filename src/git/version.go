@@ -7,17 +7,11 @@ import (
 
 	"github.com/Originate/git-town/src/command"
 	"github.com/Originate/git-town/src/exit"
-	"github.com/Originate/git-town/src/util"
 )
-
-// EnsureVersionRequirementSatisfied asserts that Git is the needed version or higher
-func EnsureVersionRequirementSatisfied() {
-	util.Ensure(isVersionRequirementSatisfied(), "Git Town requires Git 2.7.0 or higher")
-}
 
 // Helpers
 
-func isVersionRequirementSatisfied() bool {
+func IsVersionRequirementSatisfied() bool {
 	versionRegexp, err := regexp.Compile(`git version (\d+).(\d+).(\d+)`)
 	exit.OnWrap(err, "Error compiling version regular expression")
 	matches := versionRegexp.FindStringSubmatch(command.New("git", "version").Output())

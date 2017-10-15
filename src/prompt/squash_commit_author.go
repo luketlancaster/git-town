@@ -11,7 +11,7 @@ import (
 	"github.com/Originate/git-town/src/command"
 	"github.com/Originate/git-town/src/exit"
 	"github.com/Originate/git-town/src/git"
-	"github.com/Originate/git-town/src/util"
+	"github.com/Originate/git-town/src/stringtools"
 	"github.com/fatih/color"
 )
 
@@ -44,11 +44,11 @@ Please choose an author for the squash commit.
 func askForAuthor(authors []branchAuthor) string {
 	for {
 		fmt.Print("Enter user's number or a custom author (default: 1): ")
-		author, err := parseAuthor(util.GetUserInput(), authors)
+		author, err := parseAuthor(GetUserInput(), authors)
 		if err == nil {
 			return author
 		}
-		util.PrintError(err.Error())
+		PrintError(err.Error())
 	}
 }
 
@@ -87,7 +87,7 @@ func parseAuthorNumber(userInput string, authors []branchAuthor) (string, error)
 func printNumberedAuthors(authors []branchAuthor) {
 	boldFmt := color.New(color.Bold)
 	for index, author := range authors {
-		stat := util.Pluralize(author.NumberOfCommits, "commit")
+		stat := stringtools.Pluralize(author.NumberOfCommits, "commit")
 		cfmt.Printf("  %s: %s (%s)\n", boldFmt.Sprintf("%d", index+1), author.NameAndEmail, stat)
 	}
 }

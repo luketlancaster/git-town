@@ -8,43 +8,13 @@ import (
 	"github.com/Originate/git-town/src/command"
 	"github.com/Originate/git-town/src/dryrun"
 	"github.com/Originate/git-town/src/exit"
-	"github.com/Originate/git-town/src/util"
+	"github.com/Originate/git-town/src/stringtools"
 )
 
 // DoesBranchHaveUnmergedCommits returns whether the branch with the given name
 // contains commits that are not merged into the main branch
 func DoesBranchHaveUnmergedCommits(branchName string) bool {
 	return command.New("git", "log", GetMainBranch()+".."+branchName).Output() != ""
-}
-
-// EnsureBranchInSync enforces that a branch with the given name is in sync with its tracking branch
-func EnsureBranchInSync(branchName, errorMessageSuffix string) {
-	util.Ensure(IsBranchInSync(branchName), fmt.Sprintf("'%s' is not in sync with its tracking branch. %s", branchName, errorMessageSuffix))
-}
-
-// EnsureDoesNotHaveBranch enforces that a branch with the given name does not exist
-func EnsureDoesNotHaveBranch(branchName string) {
-	util.Ensure(!HasBranch(branchName), fmt.Sprintf("A branch named '%s' already exists", branchName))
-}
-
-// EnsureHasBranch enforces that a branch with the given name exists
-func EnsureHasBranch(branchName string) {
-	util.Ensure(HasBranch(branchName), fmt.Sprintf("There is no branch named '%s'", branchName))
-}
-
-// EnsureIsNotMainBranch enforces that a branch with the given name is not the main branch
-func EnsureIsNotMainBranch(branchName, errorMessage string) {
-	util.Ensure(!IsMainBranch(branchName), errorMessage)
-}
-
-// EnsureIsNotPerennialBranch enforces that a branch with the given name is not a perennial branch
-func EnsureIsNotPerennialBranch(branchName, errorMessage string) {
-	util.Ensure(!IsPerennialBranch(branchName), errorMessage)
-}
-
-// EnsureIsPerennialBranch enforces that a branch with the given name is a perennial branch
-func EnsureIsPerennialBranch(branchName, errorMessage string) {
-	util.Ensure(IsPerennialBranch(branchName), errorMessage)
 }
 
 // GetCurrentBranchName returns the name of the currently checked out branch
@@ -143,7 +113,7 @@ func HasBranch(branchName string) bool {
 // HasLocalBranch returns whether the local repository contains
 // a branch with the given name.
 func HasLocalBranch(branchName string) bool {
-	return util.DoesStringArrayContain(GetLocalBranches(), branchName)
+	return stringtools.DoesStringArrayContain(GetLocalBranches(), branchName)
 }
 
 // HasTrackingBranch returns whether the local branch with the given name

@@ -3,6 +3,7 @@ package cmd
 import (
 	"github.com/Originate/git-town/src/git"
 	"github.com/Originate/git-town/src/util"
+	"github.com/Originate/git-town/src/validation"
 	"github.com/spf13/cobra"
 )
 
@@ -24,8 +25,8 @@ Updates the parent branch of a feature branch in Git Town's configuration.`,
 }
 
 func setParentBranch(childBranch, parentBranch string) {
-	git.EnsureHasBranch(childBranch)
-	git.EnsureHasBranch(parentBranch)
+	validation.EnsureHasBranch(childBranch)
+	validation.EnsureHasBranch(parentBranch)
 	git.SetParentBranch(childBranch, parentBranch)
 	git.DeleteAllAncestorBranches()
 }

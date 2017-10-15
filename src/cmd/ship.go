@@ -5,11 +5,13 @@ import (
 
 	"github.com/Originate/git-town/src/drivers"
 	"github.com/Originate/git-town/src/exit"
+	"github.com/Originate/git-town/src/exittools"
 	"github.com/Originate/git-town/src/git"
 	"github.com/Originate/git-town/src/prompt"
 	"github.com/Originate/git-town/src/script"
 	"github.com/Originate/git-town/src/steps"
 	"github.com/Originate/git-town/src/util"
+	"github.com/Originate/git-town/src/validation"
 
 	"github.com/spf13/cobra"
 )
@@ -77,15 +79,15 @@ func gitShipConfig(args []string) (result shipConfig) {
 		result.BranchToShip = args[0]
 	}
 	if result.BranchToShip == result.InitialBranch {
-		git.EnsureDoesNotHaveOpenChanges("Did you mean to commit them before shipping?")
+		validation.EnsureDoesNotHaveOpenChanges("Did you mean to commit them before shipping?")
 	}
 	if git.HasRemote("origin") && !git.IsOffline() {
 		script.Fetch()
 	}
 	if result.BranchToShip != result.InitialBranch {
-		git.EnsureHasBranch(result.BranchToShip)
+		validation.EnsureHasBranch(result.BranchToShip)
 	}
-	git.EnsureIsFeatureBranch(result.BranchToShip, "Only feature branches can be shipped.")
+	validation.EnsureIsFeatureBranch(result.BranchToShip, "Only feature branches can be shipped.")
 	prompt.EnsureKnowsParentBranches([]string{result.BranchToShip})
 	ensureParentBranchIsMainOrPerennialBranch(result.BranchToShip)
 	return
@@ -97,7 +99,7 @@ func ensureParentBranchIsMainOrPerennialBranch(branchName string) {
 		ancestors := git.GetAncestorBranches(branchName)
 		ancestorsWithoutMainOrPerennial := ancestors[1:]
 		oldestAncestor := ancestorsWithoutMainOrPerennial[0]
-		util.ExitWithErrorMessage(
+		exittools.ExitWithErrorMessage(
 			"Shipping this branch would ship "+strings.Join(ancestorsWithoutMainOrPerennial, ", ")+" as well.",
 			"Please ship \""+oldestAncestor+"\" first.",
 		)

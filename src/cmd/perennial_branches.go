@@ -6,6 +6,7 @@ import (
 	"github.com/Originate/git-town/src/cfmt"
 	"github.com/Originate/git-town/src/git"
 	"github.com/Originate/git-town/src/util"
+	"github.com/Originate/git-town/src/validation"
 	"github.com/spf13/cobra"
 )
 
@@ -37,9 +38,9 @@ They cannot be shipped.`,
 }
 
 func addPerennialBranch(branchName string) {
-	git.EnsureHasBranch(branchToAdd)
-	git.EnsureIsNotMainBranch(branchToAdd, fmt.Sprintf("'%s' is already set as the main branch", branchToAdd))
-	git.EnsureIsNotPerennialBranch(branchToAdd, fmt.Sprintf("'%s' is already a perennial branch", branchToAdd))
+	validation.EnsureHasBranch(branchToAdd)
+	validation.EnsureIsNotMainBranch(branchToAdd, fmt.Sprintf("'%s' is already set as the main branch", branchToAdd))
+	validation.EnsureIsNotPerennialBranch(branchToAdd, fmt.Sprintf("'%s' is already a perennial branch", branchToAdd))
 	git.AddToPerennialBranches(branchToAdd)
 }
 
@@ -48,7 +49,7 @@ func printPerennialBranches() {
 }
 
 func removePerennialBranch(branchName string) {
-	git.EnsureIsPerennialBranch(branchToRemove, fmt.Sprintf("'%s' is not a perennial branch", branchToRemove))
+	validation.EnsureIsPerennialBranch(branchToRemove, fmt.Sprintf("'%s' is not a perennial branch", branchToRemove))
 	git.RemoveFromPerennialBranches(branchToRemove)
 }
 

@@ -4,7 +4,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/Originate/git-town/src/util"
+	"github.com/Originate/git-town/src/stringtools"
 )
 
 // GetPrintableMainBranch returns a user printable main branch
@@ -34,7 +34,7 @@ func GetPrintableHackPushFlag() string {
 func GetPrintableBranchTree(branchName string) (result string) {
 	result += branchName
 	for _, childBranch := range GetChildBranches(branchName) {
-		result += "\n" + util.Indent(GetPrintableBranchTree(childBranch), 1)
+		result += "\n" + stringtools.Indent(GetPrintableBranchTree(childBranch), 1)
 	}
 	return
 }

@@ -4,10 +4,12 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/Originate/git-town/src/exittools"
 	"github.com/Originate/git-town/src/git"
 	"github.com/Originate/git-town/src/script"
 	"github.com/Originate/git-town/src/steps"
 	"github.com/Originate/git-town/src/util"
+	"github.com/Originate/git-town/src/validation"
 	"github.com/spf13/cobra"
 )
 
@@ -76,19 +78,19 @@ func getRenameBranchConfig(args []string) (result renameBranchConfig) {
 		result.OldBranchName = args[0]
 		result.NewBranchName = args[1]
 	}
-	git.EnsureIsNotMainBranch(result.OldBranchName, "The main branch cannot be renamed.")
+	validation.EnsureIsNotMainBranch(result.OldBranchName, "The main branch cannot be renamed.")
 	if !forceFlag {
-		git.EnsureIsNotPerennialBranch(result.OldBranchName, fmt.Sprintf("'%s' is a perennial branch. Renaming a perennial branch typically requires other updates. If you are sure you want to do this, use '--force'.", result.OldBranchName))
+		validation.EnsureIsNotPerennialBranch(result.OldBranchName, fmt.Sprintf("'%s' is a perennial branch. Renaming a perennial branch typically requires other updates. If you are sure you want to do this, use '--force'.", result.OldBranchName))
 	}
 	if result.OldBranchName == result.NewBranchName {
-		util.ExitWithErrorMessage("Cannot rename branch to current name.")
+		exittools.ExitWithErrorMessage("Cannot rename branch to current name.")
 	}
 	if !git.IsOffline() {
 		script.Fetch()
 	}
-	git.EnsureHasBranch(result.OldBranchName)
-	git.EnsureBranchInSync(result.OldBranchName, "Please sync the branches before renaming.")
-	git.EnsureDoesNotHaveBranch(result.NewBranchName)
+	validation.EnsureHasBranch(result.OldBranchName)
+	validation.EnsureBranchInSync(result.OldBranchName, "Please sync the branches before renaming.")
+	validation.EnsureDoesNotHaveBranch(result.NewBranchName)
 	return
 }
 
