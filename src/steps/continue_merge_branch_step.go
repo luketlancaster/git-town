@@ -1,8 +1,8 @@
 package steps
 
 import (
-	"github.com/Originate/git-town/src/git"
-	"github.com/Originate/git-town/src/script"
+	"github.com/Originate/git-town/src/flows/scriptflows"
+	"github.com/Originate/git-town/src/tools/gittools"
 )
 
 // ContinueMergeBranchStep finishes an ongoing merge conflict
@@ -23,8 +23,8 @@ func (step *ContinueMergeBranchStep) CreateContinueStep() Step {
 
 // Run executes this step.
 func (step *ContinueMergeBranchStep) Run() error {
-	if git.IsMergeInProgress() {
-		return script.RunCommand("git", "commit", "--no-edit")
+	if gittools.IsMergeInProgress() {
+		return scriptflows.RunCommand("git", "commit", "--no-edit")
 	}
 	return nil
 }

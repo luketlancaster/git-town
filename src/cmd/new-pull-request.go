@@ -2,11 +2,9 @@ package cmd
 
 import (
 	"github.com/Originate/git-town/src/drivers"
-	"github.com/Originate/git-town/src/git"
-	"github.com/Originate/git-town/src/prompt"
-	"github.com/Originate/git-town/src/script"
+	"github.com/Originate/git-town/src/flows/gitflows"
+	"github.com/Originate/git-town/src/lib/gitlib"
 	"github.com/Originate/git-town/src/steps"
-	"github.com/Originate/git-town/src/util"
 	"github.com/spf13/cobra"
 )
 
@@ -50,23 +48,23 @@ Example: your SSH identity should be something like
 		})
 	},
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		return util.FirstError(
+		return errortools.FirstError(
 			validateMaxArgsFunc(args, 0),
-			git.ValidateIsRepository,
+			gittools.ValidateIsRepository,
 			validateIsConfigured,
-			git.ValidateIsOnline,
+			gittools.ValidateIsOnline,
 			drivers.ValidateHasDriver,
 		)
 	},
 }
 
 func getNewPullRequestConfig() (result newPullRequestConfig) {
-	if git.HasRemote("origin") {
-		script.Fetch()
+	if gittools.HasRemote("origin") {
+		scriptlib.Fetch()
 	}
-	result.InitialBranch = git.GetCurrentBranchName()
-	prompt.EnsureKnowsParentBranches([]string{result.InitialBranch})
-	result.BranchesToSync = append(git.GetAncestorBranches(result.InitialBranch), result.InitialBranch)
+	result.InitialBranch = gitlib.GetCurrentBranchName()
+	gitflows.EnsureKnowsParentBranches([]string{result.InitialBranch})
+	result.BranchesToSync = append(gittools.GetAncestorBranches(result.InitialBranch), result.InitialBranch)
 	return
 }
 

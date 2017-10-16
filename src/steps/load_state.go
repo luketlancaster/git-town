@@ -8,12 +8,12 @@ import (
 	"os"
 
 	"github.com/Originate/git-town/src/exit"
-	"github.com/Originate/git-town/src/util"
+	"github.com/Originate/git-town/src/tools/filetools"
 )
 
 func hasSavedState(command string) bool {
 	filename := getRunResultFilename(command)
-	return util.DoesFileExist(filename)
+	return filetools.DoesFileExist(filename)
 }
 
 func clearSavedState(command string) {

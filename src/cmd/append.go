@@ -3,12 +3,9 @@ package cmd
 import (
 	"errors"
 
-	"github.com/Originate/git-town/src/git"
-	"github.com/Originate/git-town/src/prompt"
-	"github.com/Originate/git-town/src/script"
+	"github.com/Originate/git-town/src/flows/gitflows"
+	"github.com/Originate/git-town/src/lib/gitlib"
 	"github.com/Originate/git-town/src/steps"
-	"github.com/Originate/git-town/src/util"
-	"github.com/Originate/git-town/src/validation"
 
 	"github.com/spf13/cobra"
 )
@@ -48,33 +45,33 @@ and brings over all uncommitted changes to the new feature branch.`,
 		if len(args) == 0 && !abortFlag && !continueFlag && !undoFlag {
 			return errors.New("no branch name provided")
 		}
-		return util.FirstError(
+		return errortools.FirstError(
 			validateMaxArgsFunc(args, 1),
-			git.ValidateIsRepository,
+			gittools.ValidateIsRepository,
 			validateIsConfigured,
 		)
 	},
 }
 
 func getAppendConfig(args []string) (result appendConfig) {
-	result.InitialBranch = git.GetCurrentBranchName()
+	result.InitialBranch = gitlib.GetCurrentBranchName()
 	result.TargetBranch = args[0]
-	if git.HasRemote("origin") && !git.IsOffline() {
-		script.Fetch()
+	if gittools.HasRemote("origin") && !gittools.IsOffline() {
+		scriptlib.Fetch()
 	}
-	validation.EnsureDoesNotHaveBranch(result.TargetBranch)
-	prompt.EnsureKnowsParentBranches([]string{result.InitialBranch})
+	workflows.EnsureDoesNotHaveBranch(result.TargetBranch)
+	gitflows.EnsureKnowsParentBranches([]string{result.InitialBranch})
 	return
 }
 
 func getAppendStepList(config appendConfig) (result steps.StepList) {
-	for _, branchName := range append(git.GetAncestorBranches(config.InitialBranch), config.InitialBranch) {
+	for _, branchName := range append(gittools.GetAncestorBranches(config.InitialBranch), config.InitialBranch) {
 		result.AppendList(steps.GetSyncBranchSteps(branchName))
 	}
 	result.Append(&steps.CreateBranchStep{BranchName: config.TargetBranch, StartingPoint: config.InitialBranch})
 	result.Append(&steps.SetParentBranchStep{BranchName: config.TargetBranch, ParentBranchName: config.InitialBranch})
 	result.Append(&steps.CheckoutBranchStep{BranchName: config.TargetBranch})
-	if git.HasRemote("origin") && git.ShouldHackPush() && !git.IsOffline() {
+	if gittools.HasRemote("origin") && gittools.ShouldHackPush() && !gittools.IsOffline() {
 		result.Append(&steps.CreateTrackingBranchStep{BranchName: config.TargetBranch})
 	}
 	result.Wrap(steps.WrapOptions{RunInGitRoot: true, StashOpenChanges: true})

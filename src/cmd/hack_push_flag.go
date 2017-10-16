@@ -1,10 +1,9 @@
 package cmd
 
 import (
-	"github.com/Originate/git-town/src/cfmt"
-	"github.com/Originate/git-town/src/git"
-	"github.com/Originate/git-town/src/lib/stringtools"
-	"github.com/Originate/git-town/src/util"
+	"github.com/Originate/git-town/src/flows"
+	"github.com/Originate/git-town/src/tools/cfmt"
+	"github.com/Originate/git-town/src/tools/gittools"
 	"github.com/spf13/cobra"
 )
 
@@ -20,7 +19,7 @@ The default value is false.`,
 		if len(args) == 0 {
 			printHackPushFlag()
 		} else {
-			setHackPushFlag(stringtools.StringToBool(args[0]))
+			setHackPushFlag(workflows.StringToBool(args[0]))
 		}
 	},
 	PreRunE: func(cmd *cobra.Command, args []string) error {
@@ -30,19 +29,19 @@ The default value is false.`,
 				return err
 			}
 		}
-		return util.FirstError(
+		return errortools.FirstError(
 			validateMaxArgsFunc(args, 1),
-			git.ValidateIsRepository,
+			gittools.ValidateIsRepository,
 		)
 	},
 }
 
 func printHackPushFlag() {
-	cfmt.Println(git.GetPrintableHackPushFlag())
+	cfmt.Println(gittools.GetPrintableHackPushFlag())
 }
 
 func setHackPushFlag(value bool) {
-	git.UpdateShouldHackPush(value)
+	gittools.UpdateShouldHackPush(value)
 }
 
 func init() {

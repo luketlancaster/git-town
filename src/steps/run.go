@@ -5,8 +5,7 @@ import (
 	"os"
 
 	"github.com/Originate/git-town/src/exit"
-	"github.com/Originate/git-town/src/exittools"
-	"github.com/Originate/git-town/src/validation"
+	"github.com/Originate/git-town/src/flows"
 
 	"github.com/fatih/color"
 )
@@ -32,9 +31,9 @@ func Run(options RunOptions) {
 	} else if options.IsContinue {
 		runState := loadState(options.Command)
 		if runState.RunStepList.isEmpty() {
-			exittools.ExitWithErrorMessage("Nothing to continue")
+			flows.ExitWithErrorMessage("Nothing to continue")
 		}
-		validation.EnsureDoesNotHaveConflicts()
+		workflows.EnsureDoesNotHaveConflicts()
 		runSteps(&runState, options)
 	} else if options.IsSkip {
 		runState := loadState(options.Command)
@@ -44,7 +43,7 @@ func Run(options RunOptions) {
 		runState := loadState(options.Command)
 		undoRunState := runState.CreateUndoRunState()
 		if undoRunState.RunStepList.isEmpty() {
-			exittools.ExitWithErrorMessage("Nothing to undo")
+			flows.ExitWithErrorMessage("Nothing to undo")
 		} else {
 			runSteps(&undoRunState, options)
 		}
@@ -85,7 +84,7 @@ func runSteps(runState *RunState, options RunOptions) {
 			if step.ShouldAutomaticallyAbortOnError() {
 				abortRunState := runState.CreateAbortRunState()
 				runSteps(&abortRunState, options)
-				exittools.ExitWithErrorMessage(step.GetAutomaticAbortErrorMessage())
+				flows.ExitWithErrorMessage(step.GetAutomaticAbortErrorMessage())
 			} else {
 				runState.RunStepList.Prepend(step.CreateContinueStep())
 				saveState(runState)

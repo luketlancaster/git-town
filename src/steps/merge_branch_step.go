@@ -1,8 +1,8 @@
 package steps
 
 import (
-	"github.com/Originate/git-town/src/git"
-	"github.com/Originate/git-town/src/script"
+	"github.com/Originate/git-town/src/flows/scriptflows"
+	"github.com/Originate/git-town/src/tools/gittools"
 )
 
 // MergeBranchStep merges the branch with the given name into the current branch
@@ -23,10 +23,10 @@ func (step *MergeBranchStep) CreateContinueStep() Step {
 
 // CreateUndoStepBeforeRun returns the undo step for this step before it is run.
 func (step *MergeBranchStep) CreateUndoStepBeforeRun() Step {
-	return &ResetToShaStep{Hard: true, Sha: git.GetCurrentSha()}
+	return &ResetToShaStep{Hard: true, Sha: gittools.GetCurrentSha()}
 }
 
 // Run executes this step.
 func (step *MergeBranchStep) Run() error {
-	return script.RunCommand("git", "merge", "--no-edit", step.BranchName)
+	return scriptflows.RunCommand("git", "merge", "--no-edit", step.BranchName)
 }

@@ -3,8 +3,9 @@ package steps
 import (
 	"fmt"
 
-	"github.com/Originate/git-town/src/git"
-	"github.com/Originate/git-town/src/script"
+	"github.com/Originate/git-town/src/flows/scriptflows"
+	"github.com/Originate/git-town/src/lib/gitlib"
+	"github.com/Originate/git-town/src/tools/gittools"
 )
 
 // CommitOpenChangesStep commits all open changes as a new commit.
@@ -15,15 +16,15 @@ type CommitOpenChangesStep struct {
 
 // CreateUndoStepBeforeRun returns the undo step for this step before it is run.
 func (step *CommitOpenChangesStep) CreateUndoStepBeforeRun() Step {
-	branchName := git.GetCurrentBranchName()
-	return &ResetToShaStep{Sha: git.GetBranchSha(branchName)}
+	branchName := gitlib.GetCurrentBranchName()
+	return &ResetToShaStep{Sha: gittools.GetBranchSha(branchName)}
 }
 
 // Run executes this step.
 func (step *CommitOpenChangesStep) Run() error {
-	err := script.RunCommand("git", "add", "-A")
+	err := scriptflows.RunCommand("git", "add", "-A")
 	if err != nil {
 		return err
 	}
-	return script.RunCommand("git", "commit", "-m", fmt.Sprintf("WIP on %s", git.GetCurrentBranchName()))
+	return scriptflows.RunCommand("git", "commit", "-m", fmt.Sprintf("WIP on %s", gitlib.GetCurrentBranchName()))
 }

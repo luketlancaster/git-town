@@ -1,10 +1,8 @@
 package cmd
 
 import (
-	"github.com/Originate/git-town/src/cfmt"
-	"github.com/Originate/git-town/src/git"
-	"github.com/Originate/git-town/src/util"
-	"github.com/Originate/git-town/src/validation"
+	"github.com/Originate/git-town/src/tools/cfmt"
+	"github.com/Originate/git-town/src/tools/gittools"
 	"github.com/spf13/cobra"
 )
 
@@ -22,20 +20,20 @@ The main branch is the Git branch from which new feature branches are cut.`,
 		}
 	},
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		return util.FirstError(
+		return errortools.FirstError(
 			validateMaxArgsFunc(args, 1),
-			git.ValidateIsRepository,
+			gittools.ValidateIsRepository,
 		)
 	},
 }
 
 func printMainBranch() {
-	cfmt.Println(git.GetPrintableMainBranch())
+	cfmt.Println(gittools.GetPrintableMainBranch())
 }
 
 func setMainBranch(branchName string) {
-	validation.EnsureHasBranch(branchName)
-	git.SetMainBranch(branchName)
+	workflows.EnsureHasBranch(branchName)
+	gittools.SetMainBranch(branchName)
 }
 
 func init() {

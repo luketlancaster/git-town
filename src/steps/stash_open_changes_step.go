@@ -1,8 +1,6 @@
 package steps
 
-import (
-	"github.com/Originate/git-town/src/script"
-)
+import "github.com/Originate/git-town/src/flows/scriptflows"
 
 // StashOpenChangesStep stores all uncommitted changes on the Git stash.
 type StashOpenChangesStep struct {
@@ -16,9 +14,9 @@ func (step *StashOpenChangesStep) CreateUndoStepBeforeRun() Step {
 
 // Run executes this step.
 func (step *StashOpenChangesStep) Run() error {
-	err := script.RunCommand("git", "add", "-A")
+	err := scriptflows.RunCommand("git", "add", "-A")
 	if err != nil {
 		return err
 	}
-	return script.RunCommand("git", "stash")
+	return scriptflows.RunCommand("git", "stash")
 }

@@ -5,13 +5,11 @@ import (
 
 	"github.com/Originate/git-town/src/drivers"
 	"github.com/Originate/git-town/src/exit"
-	"github.com/Originate/git-town/src/exittools"
-	"github.com/Originate/git-town/src/git"
-	"github.com/Originate/git-town/src/prompt"
-	"github.com/Originate/git-town/src/script"
+	"github.com/Originate/git-town/src/flows"
+	"github.com/Originate/git-town/src/flows/gitflows"
+	"github.com/Originate/git-town/src/flows/scriptflows"
+	"github.com/Originate/git-town/src/lib/gitlib"
 	"github.com/Originate/git-town/src/steps"
-	"github.com/Originate/git-town/src/util"
-	"github.com/Originate/git-town/src/validation"
 
 	"github.com/spf13/cobra"
 )
@@ -63,43 +61,43 @@ It will also update the base branch for any pull requests against that branch.`,
 		})
 	},
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		return util.FirstError(
+		return errortools.FirstError(
 			validateMaxArgsFunc(args, 1),
-			git.ValidateIsRepository,
+			gittools.ValidateIsRepository,
 			validateIsConfigured,
 		)
 	},
 }
 
 func gitShipConfig(args []string) (result shipConfig) {
-	result.InitialBranch = git.GetCurrentBranchName()
+	result.InitialBranch = gitlib.GetCurrentBranchName()
 	if len(args) == 0 {
 		result.BranchToShip = result.InitialBranch
 	} else {
 		result.BranchToShip = args[0]
 	}
 	if result.BranchToShip == result.InitialBranch {
-		validation.EnsureDoesNotHaveOpenChanges("Did you mean to commit them before shipping?")
+		workflows.EnsureDoesNotHaveOpenChanges("Did you mean to commit them before shipping?")
 	}
-	if git.HasRemote("origin") && !git.IsOffline() {
-		script.Fetch()
+	if gittools.HasRemote("origin") && !gittools.IsOffline() {
+		scriptflows.Fetch()
 	}
 	if result.BranchToShip != result.InitialBranch {
-		validation.EnsureHasBranch(result.BranchToShip)
+		workflows.EnsureHasBranch(result.BranchToShip)
 	}
-	validation.EnsureIsFeatureBranch(result.BranchToShip, "Only feature branches can be shipped.")
-	prompt.EnsureKnowsParentBranches([]string{result.BranchToShip})
+	workflows.EnsureIsFeatureBranch(result.BranchToShip, "Only feature branches can be shipped.")
+	gitflows.EnsureKnowsParentBranches([]string{result.BranchToShip})
 	ensureParentBranchIsMainOrPerennialBranch(result.BranchToShip)
 	return
 }
 
 func ensureParentBranchIsMainOrPerennialBranch(branchName string) {
-	parentBranch := git.GetParentBranch(branchName)
-	if !git.IsMainBranch(parentBranch) && !git.IsPerennialBranch(parentBranch) {
-		ancestors := git.GetAncestorBranches(branchName)
+	parentBranch := gittools.GetParentBranch(branchName)
+	if !gittools.IsMainBranch(parentBranch) && !workflows.IsPerennialBranch(parentBranch) {
+		ancestors := gittools.GetAncestorBranches(branchName)
 		ancestorsWithoutMainOrPerennial := ancestors[1:]
 		oldestAncestor := ancestorsWithoutMainOrPerennial[0]
-		exittools.ExitWithErrorMessage(
+		flows.ExitWithErrorMessage(
 			"Shipping this branch would ship "+strings.Join(ancestorsWithoutMainOrPerennial, ", ")+" as well.",
 			"Please ship \""+oldestAncestor+"\" first.",
 		)
@@ -107,8 +105,8 @@ func ensureParentBranchIsMainOrPerennialBranch(branchName string) {
 }
 
 func getShipStepList(config shipConfig) (result steps.StepList) {
-	var isOffline = git.IsOffline()
-	branchToMergeInto := git.GetParentBranch(config.BranchToShip)
+	var isOffline = gittools.IsOffline()
+	branchToMergeInto := gittools.GetParentBranch(config.BranchToShip)
 	isShippingInitialBranch := config.BranchToShip == config.InitialBranch
 	result.AppendList(steps.GetSyncBranchSteps(branchToMergeInto))
 	result.Append(&steps.CheckoutBranchStep{BranchName: config.BranchToShip})
@@ -123,11 +121,11 @@ func getShipStepList(config shipConfig) (result steps.StepList) {
 	} else {
 		result.Append(&steps.SquashMergeBranchStep{BranchName: config.BranchToShip, CommitMessage: commitMessage})
 	}
-	if git.HasRemote("origin") && !isOffline {
+	if gittools.HasRemote("origin") && !isOffline {
 		result.Append(&steps.PushBranchStep{BranchName: branchToMergeInto, Undoable: true})
 	}
-	childBranches := git.GetChildBranches(config.BranchToShip)
-	if canShipWithDriver || (git.HasTrackingBranch(config.BranchToShip) && len(childBranches) == 0 && !isOffline) {
+	childBranches := gittools.GetChildBranches(config.BranchToShip)
+	if canShipWithDriver || (gittools.HasTrackingBranch(config.BranchToShip) && len(childBranches) == 0 && !isOffline) {
 		result.Append(&steps.DeleteRemoteBranchStep{BranchName: config.BranchToShip, IsTracking: true})
 	}
 	result.Append(&steps.DeleteLocalBranchStep{BranchName: config.BranchToShip})
@@ -144,10 +142,10 @@ func getShipStepList(config shipConfig) (result steps.StepList) {
 }
 
 func getCanShipWithDriver(branch, parentBranch string) (bool, string) {
-	if !git.HasRemote("origin") {
+	if !gittools.HasRemote("origin") {
 		return false, ""
 	}
-	if git.IsOffline() {
+	if gittools.IsOffline() {
 		return false, ""
 	}
 	driver := drivers.GetActiveDriver()

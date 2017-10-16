@@ -3,11 +3,10 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/Originate/git-town/src/git"
-	"github.com/Originate/git-town/src/prompt"
-	"github.com/Originate/git-town/src/script"
+	"github.com/Originate/git-town/src/flows/gitflows"
+	"github.com/Originate/git-town/src/flows/scriptflows"
+	"github.com/Originate/git-town/src/lib/gitlib"
 	"github.com/Originate/git-town/src/steps"
-	"github.com/Originate/git-town/src/util"
 
 	"github.com/spf13/cobra"
 )
@@ -40,7 +39,7 @@ the main branch is synced with its upstream counterpart.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		steps.Run(steps.RunOptions{
 			CanSkip: func() bool {
-				return !(git.IsRebaseInProgress() && git.IsMainBranch(git.GetCurrentBranchName()))
+				return !(gittools.IsRebaseInProgress() && gittools.IsMainBranch(gitlib.GetCurrentBranchName()))
 			},
 			Command:    "sync",
 			IsAbort:    abortFlag,
@@ -48,7 +47,7 @@ the main branch is synced with its upstream counterpart.`,
 			IsSkip:     skipFlag,
 			IsUndo:     false,
 			SkipMessageGenerator: func() string {
-				return fmt.Sprintf("the sync of the '%s' branch", git.GetCurrentBranchName())
+				return fmt.Sprintf("the sync of the '%s' branch", gitlib.GetCurrentBranchName())
 			},
 			StepListGenerator: func() steps.StepList {
 				return getSyncStepList(getSyncConfig())
@@ -56,9 +55,9 @@ the main branch is synced with its upstream counterpart.`,
 		})
 	},
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		return util.FirstError(
+		return errortools.FirstError(
 			validateMaxArgsFunc(args, 0),
-			git.ValidateIsRepository,
+			gittools.ValidateIsRepository,
 			conditionallyActivateDryRun,
 			validateIsConfigured,
 		)
@@ -66,18 +65,18 @@ the main branch is synced with its upstream counterpart.`,
 }
 
 func getSyncConfig() (result syncConfig) {
-	if git.HasRemote("origin") && !git.IsOffline() {
-		script.Fetch()
+	if gittools.HasRemote("origin") && !gittools.IsOffline() {
+		scriptflows.Fetch()
 	}
-	result.InitialBranch = git.GetCurrentBranchName()
+	result.InitialBranch = gitlib.GetCurrentBranchName()
 	if allFlag {
-		branches := git.GetLocalBranchesWithMainBranchFirst()
-		prompt.EnsureKnowsParentBranches(branches)
+		branches := gittools.GetLocalBranchesWithMainBranchFirst()
+		gitflows.EnsureKnowsParentBranches(branches)
 		result.BranchesToSync = branches
 		result.ShouldPushTags = true
-	} else if git.IsFeatureBranch(result.InitialBranch) {
-		prompt.EnsureKnowsParentBranches([]string{result.InitialBranch})
-		result.BranchesToSync = append(git.GetAncestorBranches(result.InitialBranch), result.InitialBranch)
+	} else if gitlib.IsFeatureBranch(result.InitialBranch) {
+		gitflows.EnsureKnowsParentBranches([]string{result.InitialBranch})
+		result.BranchesToSync = append(gittools.GetAncestorBranches(result.InitialBranch), result.InitialBranch)
 	} else {
 		result.BranchesToSync = []string{result.InitialBranch}
 		result.ShouldPushTags = true
@@ -90,7 +89,7 @@ func getSyncStepList(config syncConfig) (result steps.StepList) {
 		result.AppendList(steps.GetSyncBranchSteps(branchName))
 	}
 	result.Append(&steps.CheckoutBranchStep{BranchName: config.InitialBranch})
-	if git.HasRemote("origin") && config.ShouldPushTags && !git.IsOffline() {
+	if gittools.HasRemote("origin") && config.ShouldPushTags && !gittools.IsOffline() {
 		result.Append(&steps.PushTagsStep{})
 	}
 	result.Wrap(steps.WrapOptions{RunInGitRoot: true, StashOpenChanges: true})

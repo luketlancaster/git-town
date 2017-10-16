@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/Originate/git-town/src/git"
+	"github.com/Originate/git-town/src/tools/gittools"
 )
 
 // EnsureHasShippableChangesStep asserts that the branch has unique changes not on the main branch
@@ -21,7 +21,7 @@ func (step *EnsureHasShippableChangesStep) GetAutomaticAbortErrorMessage() strin
 
 // Run executes this step.
 func (step *EnsureHasShippableChangesStep) Run() error {
-	if !git.HasShippableChanges(step.BranchName) {
+	if !gittools.HasShippableChanges(step.BranchName) {
 		return errors.New("no shippable changes")
 	}
 	return nil

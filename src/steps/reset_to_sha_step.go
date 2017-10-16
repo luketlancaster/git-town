@@ -1,8 +1,8 @@
 package steps
 
 import (
-	"github.com/Originate/git-town/src/git"
-	"github.com/Originate/git-town/src/script"
+	"github.com/Originate/git-town/src/flows/scriptflows"
+	"github.com/Originate/git-town/src/tools/gittools"
 )
 
 // ResetToShaStep undoes all commits on the current branch
@@ -15,7 +15,7 @@ type ResetToShaStep struct {
 
 // Run executes this step.
 func (step *ResetToShaStep) Run() error {
-	if step.Sha == git.GetCurrentSha() {
+	if step.Sha == gittools.GetCurrentSha() {
 		return nil
 	}
 	cmd := []string{"git", "reset"}
@@ -23,5 +23,5 @@ func (step *ResetToShaStep) Run() error {
 		cmd = append(cmd, "--hard")
 	}
 	cmd = append(cmd, step.Sha)
-	return script.RunCommand(cmd...)
+	return scriptflows.RunCommand(cmd...)
 }

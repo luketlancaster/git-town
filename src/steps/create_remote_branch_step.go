@@ -1,8 +1,6 @@
 package steps
 
-import (
-	"github.com/Originate/git-town/src/script"
-)
+import "github.com/Originate/git-town/src/flows/scriptflows"
 
 // CreateRemoteBranchStep pushes the current branch up to origin.
 type CreateRemoteBranchStep struct {
@@ -13,5 +11,5 @@ type CreateRemoteBranchStep struct {
 
 // Run executes this step.
 func (step *CreateRemoteBranchStep) Run() error {
-	return script.RunCommand("git", "push", "origin", step.Sha+":refs/heads/"+step.BranchName)
+	return scriptflows.RunCommand("git", "push", "origin", step.Sha+":refs/heads/"+step.BranchName)
 }

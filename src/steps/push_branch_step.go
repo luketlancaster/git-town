@@ -1,9 +1,10 @@
 package steps
 
 import (
-	"github.com/Originate/git-town/src/dryrun"
-	"github.com/Originate/git-town/src/git"
-	"github.com/Originate/git-town/src/script"
+	"github.com/Originate/git-town/src/flows/scriptflows"
+	"github.com/Originate/git-town/src/lib/gitlib"
+	"github.com/Originate/git-town/src/tools/dryrun"
+	"github.com/Originate/git-town/src/tools/gittools"
 )
 
 // PushBranchStep pushes the branch with the given name to the origin remote.
@@ -25,14 +26,14 @@ func (step *PushBranchStep) CreateUndoStepBeforeRun() Step {
 
 // Run executes this step.
 func (step *PushBranchStep) Run() error {
-	if !git.ShouldBranchBePushed(step.BranchName) && !dryrun.IsActive() {
+	if !gittools.ShouldBranchBePushed(step.BranchName) && !dryrun.IsActive() {
 		return nil
 	}
 	if step.Force {
-		return script.RunCommand("git", "push", "-f", "origin", step.BranchName)
+		return scriptflows.RunCommand("git", "push", "-f", "origin", step.BranchName)
 	}
-	if git.GetCurrentBranchName() == step.BranchName {
-		return script.RunCommand("git", "push")
+	if gitlib.GetCurrentBranchName() == step.BranchName {
+		return scriptflows.RunCommand("git", "push")
 	}
-	return script.RunCommand("git", "push", "origin", step.BranchName)
+	return scriptflows.RunCommand("git", "push", "origin", step.BranchName)
 }

@@ -3,9 +3,8 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/Originate/git-town/src/cfmt"
-	"github.com/Originate/git-town/src/git"
-	"github.com/Originate/git-town/src/util"
+	"github.com/Originate/git-town/src/tools/cfmt"
+	"github.com/Originate/git-town/src/tools/gittools"
 	"github.com/spf13/cobra"
 )
 
@@ -28,19 +27,19 @@ for the main branch and perennial branches.`,
 		if len(args) == 1 && args[0] != "rebase" && args[0] != "merge" {
 			return fmt.Errorf("Invalid value: '%s'", args[0])
 		}
-		return util.FirstError(
+		return errortools.FirstError(
 			validateMaxArgsFunc(args, 1),
-			git.ValidateIsRepository,
+			gittools.ValidateIsRepository,
 		)
 	},
 }
 
 func printPullBranchStrategy() {
-	cfmt.Println(git.GetPullBranchStrategy())
+	cfmt.Println(gittools.GetPullBranchStrategy())
 }
 
 func setPullBranchStrategy(value string) {
-	git.SetPullBranchStrategy(value)
+	gittools.SetPullBranchStrategy(value)
 }
 
 func init() {

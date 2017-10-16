@@ -1,10 +1,8 @@
 package cmd
 
 import (
-	"github.com/Originate/git-town/src/git"
-	"github.com/Originate/git-town/src/script"
+	"github.com/Originate/git-town/src/lib/gitlib"
 	"github.com/Originate/git-town/src/steps"
-	"github.com/Originate/git-town/src/util"
 	"github.com/spf13/cobra"
 )
 
@@ -31,31 +29,31 @@ This usually means the branch was shipped or killed on another machine.`,
 		})
 	},
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		return util.FirstError(
+		return errortools.FirstError(
 			validateMaxArgsFunc(args, 0),
-			git.ValidateIsRepository,
+			gittools.ValidateIsRepository,
 			validateIsConfigured,
-			git.ValidateIsOnline,
+			gittools.ValidateIsOnline,
 		)
 	},
 }
 
 func checkPruneBranchesPreconditions() {
-	if git.HasRemote("origin") {
-		script.Fetch()
+	if gittools.HasRemote("origin") {
+		scriptlib.Fetch()
 	}
 }
 
 func getPruneBranchesStepList() (result steps.StepList) {
-	initialBranchName := git.GetCurrentBranchName()
-	for _, branchName := range git.GetLocalBranchesWithDeletedTrackingBranches() {
+	initialBranchName := gitlib.GetCurrentBranchName()
+	for _, branchName := range gittools.GetLocalBranchesWithDeletedTrackingBranches() {
 		if initialBranchName == branchName {
-			result.Append(&steps.CheckoutBranchStep{BranchName: git.GetMainBranch()})
+			result.Append(&steps.CheckoutBranchStep{BranchName: gittools.GetMainBranch()})
 		}
 
-		parent := git.GetParentBranch(branchName)
+		parent := gittools.GetParentBranch(branchName)
 		if parent != "" {
-			for _, child := range git.GetChildBranches(branchName) {
+			for _, child := range gittools.GetChildBranches(branchName) {
 				result.Append(&steps.SetParentBranchStep{BranchName: child, ParentBranchName: parent})
 			}
 			result.Append(&steps.DeleteParentBranchStep{BranchName: branchName})

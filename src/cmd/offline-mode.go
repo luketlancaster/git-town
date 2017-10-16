@@ -1,9 +1,9 @@
 package cmd
 
 import (
-	"github.com/Originate/git-town/src/cfmt"
-	"github.com/Originate/git-town/src/git"
-	"github.com/Originate/git-town/src/lib/stringtools"
+	"github.com/Originate/git-town/src/flows"
+	"github.com/Originate/git-town/src/tools/cfmt"
+	"github.com/Originate/git-town/src/tools/gittools"
 	"github.com/spf13/cobra"
 )
 
@@ -14,7 +14,7 @@ var offlineCommand = &cobra.Command{
 		if len(args) == 0 {
 			printOfflineFlag()
 		} else {
-			setOfflineFlag(stringtools.StringToBool(args[0]))
+			setOfflineFlag(workflows.StringToBool(args[0]))
 		}
 	},
 	PreRunE: func(cmd *cobra.Command, args []string) error {
@@ -29,11 +29,11 @@ var offlineCommand = &cobra.Command{
 }
 
 func printOfflineFlag() {
-	cfmt.Println(git.GetPrintableOfflineFlag())
+	cfmt.Println(gittools.GetPrintableOfflineFlag())
 }
 
 func setOfflineFlag(value bool) {
-	git.UpdateOffline(value)
+	gittools.UpdateOffline(value)
 }
 
 func init() {

@@ -1,8 +1,8 @@
 package steps
 
 import (
-	"github.com/Originate/git-town/src/git"
-	"github.com/Originate/git-town/src/script"
+	"github.com/Originate/git-town/src/flows/scriptflows"
+	"github.com/Originate/git-town/src/tools/gittools"
 )
 
 // ContinueRebaseBranchStep finishes an ongoing rebase operation
@@ -23,8 +23,8 @@ func (step *ContinueRebaseBranchStep) CreateContinueStep() Step {
 
 // Run executes this step.
 func (step *ContinueRebaseBranchStep) Run() error {
-	if git.IsRebaseInProgress() {
-		return script.RunCommand("git", "rebase", "--continue")
+	if gittools.IsRebaseInProgress() {
+		return scriptflows.RunCommand("git", "rebase", "--continue")
 	}
 	return nil
 }

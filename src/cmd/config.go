@@ -3,9 +3,8 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/Originate/git-town/src/git"
-	"github.com/Originate/git-town/src/prompt"
-	"github.com/Originate/git-town/src/util"
+	"github.com/Originate/git-town/src/flows/promptflows"
+	"github.com/Originate/git-town/src/lib/promptlib"
 	"github.com/spf13/cobra"
 )
 
@@ -25,34 +24,34 @@ var configCommand = &cobra.Command{
 		}
 	},
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		return util.FirstError(
+		return errortools.FirstError(
 			validateMaxArgsFunc(args, 0),
-			git.ValidateIsRepository,
+			gittools.ValidateIsRepository,
 		)
 	},
 }
 
 func printConfig() {
 	fmt.Println()
-	prompt.PrintLabelAndValue("Main branch", git.GetPrintableMainBranch())
-	prompt.PrintLabelAndValue("Perennial branches", git.GetPrintablePerennialBranches())
+	promptlib.PrintLabelAndValue("Main branch", gittools.GetPrintableMainBranch())
+	promptlib.PrintLabelAndValue("Perennial branches", gittools.GetPrintablePerennialBranches())
 
-	mainBranch := git.GetMainBranch()
+	mainBranch := gittools.GetMainBranch()
 	if mainBranch != "" {
-		prompt.PrintLabelAndValue("Branch Ancestry", git.GetPrintableBranchTree(mainBranch))
+		promptlib.PrintLabelAndValue("Branch Ancestry", gittools.GetPrintableBranchTree(mainBranch))
 	}
 
-	prompt.PrintLabelAndValue("Pull branch strategy", git.GetPullBranchStrategy())
-	prompt.PrintLabelAndValue("git-hack push flag", git.GetPrintableHackPushFlag())
+	promptlib.PrintLabelAndValue("Pull branch strategy", gittools.GetPullBranchStrategy())
+	promptlib.PrintLabelAndValue("git-hack push flag", gittools.GetPrintableHackPushFlag())
 }
 
 func resetConfig() {
-	git.RemoveAllConfiguration()
+	gittools.RemoveAllConfiguration()
 }
 
 func setupConfig() {
-	prompt.ConfigureMainBranch()
-	prompt.ConfigurePerennialBranches()
+	promptflows.ConfigureMainBranch()
+	promptflows.ConfigurePerennialBranches()
 }
 
 func init() {

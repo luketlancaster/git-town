@@ -1,8 +1,6 @@
 package steps
 
-import (
-	"github.com/Originate/git-town/src/script"
-)
+import "github.com/Originate/git-town/src/flows/scriptflows"
 
 // PushTagsStep pushes newly created Git tags to the remote.
 type PushTagsStep struct {
@@ -11,5 +9,5 @@ type PushTagsStep struct {
 
 // Run executes this step.
 func (step *PushTagsStep) Run() error {
-	return script.RunCommand("git", "push", "--tags")
+	return scriptflows.RunCommand("git", "push", "--tags")
 }

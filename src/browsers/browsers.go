@@ -3,8 +3,8 @@ package browsers
 import (
 	"runtime"
 
-	"github.com/Originate/git-town/src/command"
-	"github.com/Originate/git-town/src/exittools"
+	"github.com/Originate/git-town/src/flows"
+	"github.com/Originate/git-town/src/tools/command"
 )
 
 // GetOpenBrowserCommand returns the command to run on the console
@@ -23,7 +23,7 @@ func GetOpenBrowserCommand() string {
 			return browserCommand
 		}
 	}
-	exittools.ExitWithErrorMessage(missingOpenBrowserCommandMessages...)
+	flows.ExitWithErrorMessage(missingOpenBrowserCommandMessages...)
 	return ""
 }
 

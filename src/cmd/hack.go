@@ -3,11 +3,8 @@ package cmd
 import (
 	"errors"
 
-	"github.com/Originate/git-town/src/git"
-	"github.com/Originate/git-town/src/script"
 	"github.com/Originate/git-town/src/steps"
-	"github.com/Originate/git-town/src/util"
-	"github.com/Originate/git-town/src/validation"
+	"github.com/Originate/git-town/src/tools/gittools"
 
 	"github.com/spf13/cobra"
 )
@@ -49,9 +46,9 @@ $ git town hack-push-flag false`,
 		if len(args) == 0 && !abortFlag && !continueFlag {
 			return errors.New("no branch name provided")
 		}
-		return util.FirstError(
+		return errortools.FirstError(
 			validateMaxArgsFunc(args, 1),
-			git.ValidateIsRepository,
+			gittools.ValidateIsRepository,
 			validateIsConfigured,
 		)
 	},
@@ -59,18 +56,18 @@ $ git town hack-push-flag false`,
 
 func getHackConfig(args []string) (result hackConfig) {
 	result.TargetBranch = args[0]
-	if git.HasRemote("origin") && !git.IsOffline() {
-		script.Fetch()
+	if gittools.HasRemote("origin") && !gittools.IsOffline() {
+		scriptlib.Fetch()
 	}
-	validation.EnsureDoesNotHaveBranch(result.TargetBranch)
+	workflows.EnsureDoesNotHaveBranch(result.TargetBranch)
 	return
 }
 
 func getHackStepList(config hackConfig) (result steps.StepList) {
-	mainBranchName := git.GetMainBranch()
+	mainBranchName := gittools.GetMainBranch()
 	result.AppendList(steps.GetSyncBranchSteps(mainBranchName))
 	result.Append(&steps.CreateAndCheckoutBranchStep{BranchName: config.TargetBranch, ParentBranchName: mainBranchName})
-	if git.HasRemote("origin") && git.ShouldHackPush() && !git.IsOffline() {
+	if gittools.HasRemote("origin") && gittools.ShouldHackPush() && !gittools.IsOffline() {
 		result.Append(&steps.CreateTrackingBranchStep{BranchName: config.TargetBranch})
 	}
 	result.Wrap(steps.WrapOptions{RunInGitRoot: true, StashOpenChanges: true})

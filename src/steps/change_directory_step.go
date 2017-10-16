@@ -4,7 +4,7 @@ import (
 	"os"
 
 	"github.com/Originate/git-town/src/exit"
-	"github.com/Originate/git-town/src/script"
+	"github.com/Originate/git-town/src/flows/scriptflows"
 )
 
 // ChangeDirectoryStep changes the current working directory.
@@ -24,7 +24,7 @@ func (step *ChangeDirectoryStep) CreateUndoStepBeforeRun() Step {
 func (step *ChangeDirectoryStep) Run() error {
 	_, err := os.Stat(step.Directory)
 	if err == nil {
-		script.PrintCommand("cd", step.Directory)
+		scriptflows.PrintCommand("cd", step.Directory)
 		return os.Chdir(step.Directory)
 	}
 	return nil

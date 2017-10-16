@@ -4,7 +4,8 @@ import (
 	"os"
 
 	"github.com/Originate/git-town/src/exit"
-	"github.com/Originate/git-town/src/git"
+	"github.com/Originate/git-town/src/lib/gitlib"
+	"github.com/Originate/git-town/src/tools/gittools"
 )
 
 // StepList is a list of steps
@@ -66,18 +67,18 @@ type WrapOptions struct {
 // change to the Git root directory or stash away open changes.
 func (stepList *StepList) Wrap(options WrapOptions) {
 	stepList.Append(&PreserveCheckoutHistoryStep{
-		InitialBranch:                     git.GetCurrentBranchName(),
-		InitialPreviouslyCheckedOutBranch: git.GetPreviouslyCheckedOutBranch(),
+		InitialBranch:                     gitlib.GetCurrentBranchName(),
+		InitialPreviouslyCheckedOutBranch: gittools.GetPreviouslyCheckedOutBranch(),
 	})
 
-	if options.StashOpenChanges && git.HasOpenChanges() {
+	if options.StashOpenChanges && gittools.HasOpenChanges() {
 		stepList.Prepend(&StashOpenChangesStep{})
 		stepList.Append(&RestoreOpenChangesStep{})
 	}
 
 	initialDirectory, err := os.Getwd()
 	exit.On(err)
-	gitRootDirectory := git.GetRootDirectory()
+	gitRootDirectory := gittools.GetRootDirectory()
 
 	if options.RunInGitRoot && initialDirectory != gitRootDirectory {
 		stepList.Prepend(&ChangeDirectoryStep{Directory: gitRootDirectory})

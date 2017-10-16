@@ -6,7 +6,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/Originate/git-town/src/git"
+	"github.com/Originate/git-town/src/tools/gittools"
 )
 
 type bitbucketCodeHostingDriver struct {
@@ -25,7 +25,7 @@ func (d *bitbucketCodeHostingDriver) CanMergePullRequest(branch, parentBranch st
 
 func (d *bitbucketCodeHostingDriver) GetNewPullRequestURL(branch, parentBranch string) string {
 	query := url.Values{}
-	query.Add("source", strings.Join([]string{d.repository, git.GetBranchSha(branch)[0:12], branch}, ":"))
+	query.Add("source", strings.Join([]string{d.repository, gittools.GetBranchSha(branch)[0:12], branch}, ":"))
 	query.Add("dest", strings.Join([]string{d.repository, "", parentBranch}, ":"))
 	return fmt.Sprintf("%s/pull-request/new?%s", d.GetRepositoryURL(), query.Encode())
 }
@@ -44,8 +44,8 @@ func (d *bitbucketCodeHostingDriver) HostingServiceName() string {
 
 func (d *bitbucketCodeHostingDriver) SetOriginURL(originURL string) {
 	d.originURL = originURL
-	d.hostname = git.GetURLHostname(originURL)
-	d.repository = git.GetURLRepositoryName(originURL)
+	d.hostname = gittools.GetURLHostname(originURL)
+	d.repository = gittools.GetURLRepositoryName(originURL)
 }
 
 func (d *bitbucketCodeHostingDriver) SetOriginHostname(originHostname string) {

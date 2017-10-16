@@ -1,8 +1,8 @@
 package steps
 
 import (
-	"github.com/Originate/git-town/src/git"
-	"github.com/Originate/git-town/src/script"
+	"github.com/Originate/git-town/src/flows/scriptflows"
+	"github.com/Originate/git-town/src/tools/gittools"
 )
 
 // DeleteRemoteBranchStep deletes the current branch from the origin remote.
@@ -17,11 +17,11 @@ func (step *DeleteRemoteBranchStep) CreateUndoStepBeforeRun() Step {
 	if step.IsTracking {
 		return &CreateTrackingBranchStep{BranchName: step.BranchName}
 	}
-	sha := git.GetBranchSha(git.GetTrackingBranchName(step.BranchName))
+	sha := gittools.GetBranchSha(gittools.GetTrackingBranchName(step.BranchName))
 	return &CreateRemoteBranchStep{BranchName: step.BranchName, Sha: sha}
 }
 
 // Run executes this step.
 func (step *DeleteRemoteBranchStep) Run() error {
-	return script.RunCommand("git", "push", "origin", ":"+step.BranchName)
+	return scriptflows.RunCommand("git", "push", "origin", ":"+step.BranchName)
 }

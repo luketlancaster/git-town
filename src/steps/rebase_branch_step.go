@@ -1,8 +1,8 @@
 package steps
 
 import (
-	"github.com/Originate/git-town/src/git"
-	"github.com/Originate/git-town/src/script"
+	"github.com/Originate/git-town/src/flows/scriptflows"
+	"github.com/Originate/git-town/src/tools/gittools"
 )
 
 // RebaseBranchStep rebases the current branch
@@ -24,10 +24,10 @@ func (step *RebaseBranchStep) CreateContinueStep() Step {
 
 // CreateUndoStepBeforeRun returns the undo step for this step before it is run.
 func (step *RebaseBranchStep) CreateUndoStepBeforeRun() Step {
-	return &ResetToShaStep{Hard: true, Sha: git.GetCurrentSha()}
+	return &ResetToShaStep{Hard: true, Sha: gittools.GetCurrentSha()}
 }
 
 // Run executes this step.
 func (step *RebaseBranchStep) Run() error {
-	return script.RunCommand("git", "rebase", step.BranchName)
+	return scriptflows.RunCommand("git", "rebase", step.BranchName)
 }

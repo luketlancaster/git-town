@@ -3,8 +3,9 @@ package steps
 import (
 	"github.com/Originate/git-town/src/drivers"
 	"github.com/Originate/git-town/src/exit"
-	"github.com/Originate/git-town/src/git"
-	"github.com/Originate/git-town/src/script"
+	"github.com/Originate/git-town/src/flows/scriptflows"
+	"github.com/Originate/git-town/src/lib/gitlib"
+	"github.com/Originate/git-town/src/tools/gittools"
 )
 
 // DriverMergePullRequestStep squash merges the branch with the given name into the current branch
@@ -47,14 +48,14 @@ func (step *DriverMergePullRequestStep) Run() error {
 		// Allow the user to enter the commit message as if shipping without a driver
 		// then revert the commit since merging via the driver will perform the actual squash merge
 		step.enteredEmptyCommitMessage = true
-		script.SquashMerge(step.BranchName)
-		git.CommentOutSquashCommitMessage(step.DefaultCommitMessage + "\n\n")
-		err := script.RunCommand("git", "commit")
+		scriptflows.SquashMerge(step.BranchName)
+		gittools.CommentOutSquashCommitMessage(step.DefaultCommitMessage + "\n\n")
+		err := scriptflows.RunCommand("git", "commit")
 		if err != nil {
 			return err
 		}
-		commitMessage = git.GetLastCommitMessage()
-		err = script.RunCommand("git", "reset", "--hard", "HEAD~1")
+		commitMessage = gittools.GetLastCommitMessage()
+		err = scriptflows.RunCommand("git", "reset", "--hard", "HEAD~1")
 		exit.OnWrap(err, "Error resetting the main branch")
 		step.enteredEmptyCommitMessage = false
 	}
@@ -63,7 +64,7 @@ func (step *DriverMergePullRequestStep) Run() error {
 		Branch:        step.BranchName,
 		CommitMessage: commitMessage,
 		LogRequests:   true,
-		ParentBranch:  git.GetCurrentBranchName(),
+		ParentBranch:  gitlib.GetCurrentBranchName(),
 	})
 	return step.mergeError
 }

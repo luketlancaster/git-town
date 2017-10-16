@@ -7,8 +7,7 @@ import (
 	"path"
 
 	"github.com/Originate/git-town/src/exit"
-	"github.com/Originate/git-town/src/exittools"
-	"github.com/Originate/git-town/src/util"
+	"github.com/Originate/git-town/src/flows"
 	"github.com/spf13/cobra"
 )
 
@@ -27,8 +26,8 @@ func installFishAutocompletion() {
 	filename := path.Join(os.Getenv("HOME"), ".config", "fish", "completions", "git.fish")
 	err := os.MkdirAll(path.Dir(filename), 0700)
 	exit.On(err)
-	if util.DoesFileExist(filename) {
-		exittools.ExitWithErrorMessage("Git autocompletion for Fish shell already exists")
+	if filetools.DoesFileExist(filename) {
+		flows.ExitWithErrorMessage("Git autocompletion for Fish shell already exists")
 	}
 	err = ioutil.WriteFile(filename, []byte(buildAutocompletionDefinition()), 0644)
 	exit.On(err)

@@ -3,10 +3,8 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/Originate/git-town/src/cfmt"
-	"github.com/Originate/git-town/src/git"
-	"github.com/Originate/git-town/src/util"
-	"github.com/Originate/git-town/src/validation"
+	"github.com/Originate/git-town/src/tools/cfmt"
+	"github.com/Originate/git-town/src/tools/gittools"
 	"github.com/spf13/cobra"
 )
 
@@ -30,27 +28,22 @@ They cannot be shipped.`,
 		}
 	},
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		return util.FirstError(
+		return errortools.FirstError(
 			validateMaxArgsFunc(args, 0),
-			git.ValidateIsRepository,
+			gittools.ValidateIsRepository,
 		)
 	},
 }
 
 func addPerennialBranch(branchName string) {
-	validation.EnsureHasBranch(branchToAdd)
-	validation.EnsureIsNotMainBranch(branchToAdd, fmt.Sprintf("'%s' is already set as the main branch", branchToAdd))
-	validation.EnsureIsNotPerennialBranch(branchToAdd, fmt.Sprintf("'%s' is already a perennial branch", branchToAdd))
-	git.AddToPerennialBranches(branchToAdd)
+	workflows.EnsureHasBranch(branchToAdd)
+	workflows.EnsureIsNotMainBranch(branchToAdd, fmt.Sprintf("'%s' is already set as the main branch", branchToAdd))
+	workflows.EnsureIsNotPerennialBranch(branchToAdd, fmt.Sprintf("'%s' is already a perennial branch", branchToAdd))
+	gittools.AddToPerennialBranches(branchToAdd)
 }
 
 func printPerennialBranches() {
-	cfmt.Println(git.GetPrintablePerennialBranches())
-}
-
-func removePerennialBranch(branchName string) {
-	validation.EnsureIsPerennialBranch(branchToRemove, fmt.Sprintf("'%s' is not a perennial branch", branchToRemove))
-	git.RemoveFromPerennialBranches(branchToRemove)
+	cfmt.Println(gittools.GetPrintablePerennialBranches())
 }
 
 func init() {

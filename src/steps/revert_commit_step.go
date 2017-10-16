@@ -1,6 +1,6 @@
 package steps
 
-import "github.com/Originate/git-town/src/script"
+import "github.com/Originate/git-town/src/flows/scriptflows"
 
 // RevertCommitStep reverts the commit with the given sha.
 type RevertCommitStep struct {
@@ -10,5 +10,5 @@ type RevertCommitStep struct {
 
 // Run executes this step.
 func (step *RevertCommitStep) Run() error {
-	return script.RunCommand("git", "revert", step.Sha)
+	return scriptflows.RunCommand("git", "revert", step.Sha)
 }

@@ -9,7 +9,7 @@ import (
 
 	"golang.org/x/oauth2"
 
-	"github.com/Originate/git-town/src/git"
+	"github.com/Originate/git-town/src/tools/gittools"
 	"github.com/google/go-github/github"
 )
 
@@ -43,7 +43,7 @@ func (d *githubCodeHostingDriver) CanMergePullRequest(branch, parentBranch strin
 
 func (d *githubCodeHostingDriver) GetNewPullRequestURL(branch string, parentBranch string) string {
 	toCompare := branch
-	if parentBranch != git.GetMainBranch() {
+	if parentBranch != gittools.GetMainBranch() {
 		toCompare = parentBranch + "..." + branch
 	}
 	return fmt.Sprintf("%s/compare/%s?expand=1", d.GetRepositoryURL(), toCompare)
@@ -68,9 +68,9 @@ func (d *githubCodeHostingDriver) HostingServiceName() string {
 
 func (d *githubCodeHostingDriver) SetOriginURL(originURL string) {
 	d.originURL = originURL
-	d.hostname = git.GetURLHostname(originURL)
+	d.hostname = gittools.GetURLHostname(originURL)
 	d.client = nil
-	repositoryParts := strings.SplitN(git.GetURLRepositoryName(originURL), "/", 2)
+	repositoryParts := strings.SplitN(gittools.GetURLRepositoryName(originURL), "/", 2)
 	if len(repositoryParts) == 2 {
 		d.owner = repositoryParts[0]
 		d.repository = repositoryParts[1]

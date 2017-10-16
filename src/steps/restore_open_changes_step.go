@@ -1,8 +1,6 @@
 package steps
 
-import (
-	"github.com/Originate/git-town/src/script"
-)
+import "github.com/Originate/git-town/src/flows/scriptflows"
 
 // RestoreOpenChangesStep restores stashed away changes into the workspace.
 type RestoreOpenChangesStep struct {
@@ -16,5 +14,5 @@ func (step *RestoreOpenChangesStep) CreateUndoStepBeforeRun() Step {
 
 // Run executes this step.
 func (step *RestoreOpenChangesStep) Run() error {
-	return script.RunCommand("git", "stash", "pop")
+	return scriptflows.RunCommand("git", "stash", "pop")
 }

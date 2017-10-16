@@ -6,7 +6,7 @@ import (
 	"regexp"
 
 	"github.com/Originate/git-town/src/exit"
-	"github.com/Originate/git-town/src/git"
+	"github.com/Originate/git-town/src/tools/gittools"
 )
 
 // Step represents a dedicated activity within a Git Town command.
@@ -37,6 +37,6 @@ type SerializedRunState struct {
 func getRunResultFilename(command string) string {
 	replaceCharacterRegexp, err := regexp.Compile("[[:^alnum:]]")
 	exit.OnWrap(err, "Error compiling replace character expression")
-	directory := replaceCharacterRegexp.ReplaceAllString(git.GetRootDirectory(), "-")
+	directory := replaceCharacterRegexp.ReplaceAllString(gittools.GetRootDirectory(), "-")
 	return path.Join(os.TempDir(), command+"_"+directory)
 }

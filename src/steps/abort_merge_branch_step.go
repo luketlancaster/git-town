@@ -1,6 +1,6 @@
 package steps
 
-import "github.com/Originate/git-town/src/script"
+import "github.com/Originate/git-town/src/flows/scriptflows"
 
 // AbortMergeBranchStep aborts the current merge conflict.
 type AbortMergeBranchStep struct {
@@ -9,5 +9,5 @@ type AbortMergeBranchStep struct {
 
 // Run executes this step.
 func (step *AbortMergeBranchStep) Run() error {
-	return script.RunCommand("git", "merge", "--abort")
+	return scriptflows.RunCommand("git", "merge", "--abort")
 }

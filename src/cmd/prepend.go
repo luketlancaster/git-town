@@ -3,12 +3,9 @@ package cmd
 import (
 	"errors"
 
-	"github.com/Originate/git-town/src/git"
-	"github.com/Originate/git-town/src/prompt"
-	"github.com/Originate/git-town/src/script"
+	"github.com/Originate/git-town/src/flows/gitflows"
+	"github.com/Originate/git-town/src/lib/gitlib"
 	"github.com/Originate/git-town/src/steps"
-	"github.com/Originate/git-town/src/util"
-	"github.com/Originate/git-town/src/validation"
 
 	"github.com/spf13/cobra"
 )
@@ -54,36 +51,36 @@ This can be disabled by toggling the "hack-push-flag" configuration:
 		if len(args) == 0 && !abortFlag && !continueFlag && !undoFlag {
 			return errors.New("no branch name provided")
 		}
-		return util.FirstError(
+		return errortools.FirstError(
 			validateMaxArgsFunc(args, 1),
-			git.ValidateIsRepository,
+			gittools.ValidateIsRepository,
 			validateIsConfigured,
 		)
 	},
 }
 
 func getPrependConfig(args []string) (result prependConfig) {
-	result.InitialBranch = git.GetCurrentBranchName()
+	result.InitialBranch = gitlib.GetCurrentBranchName()
 	result.TargetBranch = args[0]
-	if git.HasRemote("origin") && !git.IsOffline() {
-		script.Fetch()
+	if gittools.HasRemote("origin") && !gittools.IsOffline() {
+		scriptlib.Fetch()
 	}
-	validation.EnsureDoesNotHaveBranch(result.TargetBranch)
-	validation.EnsureIsFeatureBranch(result.InitialBranch, "Only feature branches can have parent branches.")
-	prompt.EnsureKnowsParentBranches([]string{result.InitialBranch})
-	result.ParentBranch = git.GetParentBranch(result.InitialBranch)
+	workflows.EnsureDoesNotHaveBranch(result.TargetBranch)
+	workflows.EnsureIsFeatureBranch(result.InitialBranch, "Only feature branches can have parent branches.")
+	gitflows.EnsureKnowsParentBranches([]string{result.InitialBranch})
+	result.ParentBranch = gittools.GetParentBranch(result.InitialBranch)
 	return
 }
 
 func getPrependStepList(config prependConfig) (result steps.StepList) {
-	for _, branchName := range git.GetAncestorBranches(config.InitialBranch) {
+	for _, branchName := range gittools.GetAncestorBranches(config.InitialBranch) {
 		result.AppendList(steps.GetSyncBranchSteps(branchName))
 	}
 	result.Append(&steps.CreateBranchStep{BranchName: config.TargetBranch, StartingPoint: config.ParentBranch})
 	result.Append(&steps.SetParentBranchStep{BranchName: config.TargetBranch, ParentBranchName: config.ParentBranch})
 	result.Append(&steps.SetParentBranchStep{BranchName: config.InitialBranch, ParentBranchName: config.TargetBranch})
 	result.Append(&steps.CheckoutBranchStep{BranchName: config.TargetBranch})
-	if git.HasRemote("origin") && git.ShouldHackPush() && !git.IsOffline() {
+	if gittools.HasRemote("origin") && gittools.ShouldHackPush() && !gittools.IsOffline() {
 		result.Append(&steps.CreateTrackingBranchStep{BranchName: config.TargetBranch})
 	}
 	result.Wrap(steps.WrapOptions{RunInGitRoot: true, StashOpenChanges: true})

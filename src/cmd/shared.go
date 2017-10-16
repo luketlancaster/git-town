@@ -4,9 +4,8 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/Originate/git-town/src/prompt"
-	"github.com/Originate/git-town/src/script"
-	"github.com/Originate/git-town/src/util"
+	"github.com/Originate/git-town/src/flows/scriptflows"
+	"github.com/Originate/git-town/src/flowstwo"
 )
 
 // These variables represent command-line flags
@@ -26,14 +25,14 @@ var dryRunFlagDescription = "Output the commands that would be run without them"
 
 func conditionallyActivateDryRun() error {
 	if dryRunFlag {
-		script.ActivateDryRun()
+		scriptflows.ActivateDryRun()
 	}
 	return nil
 }
 
 func validateArgsCountFunc(args []string, count int) func() error {
 	return func() error {
-		return util.FirstError(
+		return errortools.FirstError(
 			validateMinArgsFunc(args, count),
 			validateMaxArgsFunc(args, count),
 		)
@@ -80,6 +79,6 @@ func validateMaxArgsFunc(args []string, max int) func() error {
 }
 
 func validateIsConfigured() error {
-	prompt.EnsureIsConfigured()
+	flowstwo.EnsureIsConfigured()
 	return nil
 }

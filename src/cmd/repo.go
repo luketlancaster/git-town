@@ -2,9 +2,7 @@ package cmd
 
 import (
 	"github.com/Originate/git-town/src/drivers"
-	"github.com/Originate/git-town/src/git"
-	"github.com/Originate/git-town/src/script"
-	"github.com/Originate/git-town/src/util"
+	"github.com/Originate/git-town/src/tools/gittools"
 	"github.com/spf13/cobra"
 )
 
@@ -22,14 +20,14 @@ Example: your SSH identity should be something like
          "git@github-as-account1:Originate/git town.git"`,
 	Run: func(cmd *cobra.Command, args []string) {
 		driver := drivers.GetActiveDriver()
-		script.OpenBrowser(driver.GetRepositoryURL())
+		scriptlib.OpenBrowser(driver.GetRepositoryURL())
 	},
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		return util.FirstError(
+		return errortools.FirstError(
 			validateMaxArgsFunc(args, 0),
-			git.ValidateIsRepository,
+			gittools.ValidateIsRepository,
 			validateIsConfigured,
-			git.ValidateIsOnline,
+			gittools.ValidateIsOnline,
 			drivers.ValidateHasDriver,
 		)
 	},

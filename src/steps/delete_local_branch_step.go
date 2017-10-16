@@ -1,8 +1,8 @@
 package steps
 
 import (
-	"github.com/Originate/git-town/src/git"
-	"github.com/Originate/git-town/src/script"
+	"github.com/Originate/git-town/src/flows/scriptflows"
+	"github.com/Originate/git-town/src/tools/gittools"
 )
 
 // DeleteLocalBranchStep deletes the branch with the given name,
@@ -15,15 +15,15 @@ type DeleteLocalBranchStep struct {
 
 // CreateUndoStepBeforeRun returns the undo step for this step before it is run.
 func (step *DeleteLocalBranchStep) CreateUndoStepBeforeRun() Step {
-	sha := git.GetBranchSha(step.BranchName)
+	sha := gittools.GetBranchSha(step.BranchName)
 	return &CreateBranchStep{BranchName: step.BranchName, StartingPoint: sha}
 }
 
 // Run executes this step.
 func (step *DeleteLocalBranchStep) Run() error {
 	op := "-d"
-	if step.Force || git.DoesBranchHaveUnmergedCommits(step.BranchName) {
+	if step.Force || gittools.DoesBranchHaveUnmergedCommits(step.BranchName) {
 		op = "-D"
 	}
-	return script.RunCommand("git", "branch", op, step.BranchName)
+	return scriptflows.RunCommand("git", "branch", op, step.BranchName)
 }

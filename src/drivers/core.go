@@ -1,6 +1,6 @@
 package drivers
 
-import "github.com/Originate/git-town/src/git"
+import "github.com/Originate/git-town/src/tools/gittools"
 
 // Core provides the public API for the drivers subsystem
 
@@ -12,12 +12,12 @@ var activeDriver CodeHostingDriver
 func GetActiveDriver() CodeHostingDriver {
 	if activeDriver == nil {
 		activeDriver = GetDriver(DriverOptions{
-			DriverType:     git.GetConfigurationValue("git-town.code-hosting-driver"),
-			OriginURL:      git.GetRemoteOriginURL(),
-			OriginHostname: git.GetConfigurationValue("git-town.code-hosting-origin-hostname"),
+			DriverType:     gittools.GetConfigurationValue("git-town.code-hosting-driver"),
+			OriginURL:      gittools.GetRemoteOriginURL(),
+			OriginHostname: gittools.GetConfigurationValue("git-town.code-hosting-origin-hostname"),
 		})
 		if activeDriver != nil {
-			activeDriver.SetAPIToken(git.GetConfigurationValue(activeDriver.GetAPITokenKey()))
+			activeDriver.SetAPIToken(gittools.GetConfigurationValue(activeDriver.GetAPITokenKey()))
 		}
 	}
 	return activeDriver

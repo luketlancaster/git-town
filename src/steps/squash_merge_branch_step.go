@@ -1,9 +1,9 @@
 package steps
 
 import (
-	"github.com/Originate/git-town/src/git"
-	"github.com/Originate/git-town/src/prompt"
-	"github.com/Originate/git-town/src/script"
+	"github.com/Originate/git-town/src/flows/scriptflows"
+	"github.com/Originate/git-town/src/lib/promptlib"
+	"github.com/Originate/git-town/src/tools/gittools"
 )
 
 // SquashMergeBranchStep squash merges the branch with the given name into the current branch
@@ -20,7 +20,7 @@ func (step *SquashMergeBranchStep) CreateAbortStep() Step {
 
 // CreateUndoStepAfterRun returns the undo step for this step after it is run.
 func (step *SquashMergeBranchStep) CreateUndoStepAfterRun() Step {
-	return &RevertCommitStep{Sha: git.GetCurrentSha()}
+	return &RevertCommitStep{Sha: gittools.GetCurrentSha()}
 }
 
 // GetAutomaticAbortErrorMessage returns the error message to display when this step
@@ -31,17 +31,17 @@ func (step *SquashMergeBranchStep) GetAutomaticAbortErrorMessage() string {
 
 // Run executes this step.
 func (step *SquashMergeBranchStep) Run() error {
-	script.SquashMerge(step.BranchName)
+	scriptflows.SquashMerge(step.BranchName)
 	commitCmd := []string{"git", "commit"}
 	if step.CommitMessage != "" {
 		commitCmd = append(commitCmd, "-m", step.CommitMessage)
 	}
-	author := prompt.GetSquashCommitAuthor(step.BranchName)
-	if author != git.GetLocalAuthor() {
+	author := promptlib.GetSquashCommitAuthor(step.BranchName)
+	if author != gittools.GetLocalAuthor() {
 		commitCmd = append(commitCmd, "--author", author)
 	}
-	git.CommentOutSquashCommitMessage("")
-	return script.RunCommand(commitCmd...)
+	gittools.CommentOutSquashCommitMessage("")
+	return scriptflows.RunCommand(commitCmd...)
 }
 
 // ShouldAutomaticallyAbortOnError returns whether this step should cause the command to

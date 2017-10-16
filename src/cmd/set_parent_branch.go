@@ -1,9 +1,7 @@
 package cmd
 
 import (
-	"github.com/Originate/git-town/src/git"
-	"github.com/Originate/git-town/src/util"
-	"github.com/Originate/git-town/src/validation"
+	"github.com/Originate/git-town/src/tools/gittools"
 	"github.com/spf13/cobra"
 )
 
@@ -17,18 +15,18 @@ Updates the parent branch of a feature branch in Git Town's configuration.`,
 		setParentBranch(args[0], args[1])
 	},
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		return util.FirstError(
+		return errortools.FirstError(
 			validateMaxArgsFunc(args, 2),
-			git.ValidateIsRepository,
+			gittools.ValidateIsRepository,
 		)
 	},
 }
 
 func setParentBranch(childBranch, parentBranch string) {
-	validation.EnsureHasBranch(childBranch)
-	validation.EnsureHasBranch(parentBranch)
-	git.SetParentBranch(childBranch, parentBranch)
-	git.DeleteAllAncestorBranches()
+	workflows.EnsureHasBranch(childBranch)
+	workflows.EnsureHasBranch(parentBranch)
+	gittools.SetParentBranch(childBranch, parentBranch)
+	gittools.DeleteAllAncestorBranches()
 }
 
 func init() {

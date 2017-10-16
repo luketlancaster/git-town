@@ -1,6 +1,6 @@
 package steps
 
-import "github.com/Originate/git-town/src/git"
+import "github.com/Originate/git-town/src/tools/gittools"
 
 // DeleteAncestorBranchesStep removes all ancestor information
 // for the current branch
@@ -11,6 +11,6 @@ type DeleteAncestorBranchesStep struct {
 
 // Run executes this step.
 func (step *DeleteAncestorBranchesStep) Run() error {
-	git.DeleteAllAncestorBranches()
+	gittools.DeleteAllAncestorBranches()
 	return nil
 }

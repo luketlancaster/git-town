@@ -4,12 +4,9 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/Originate/git-town/src/git"
-	"github.com/Originate/git-town/src/prompt"
-	"github.com/Originate/git-town/src/script"
+	"github.com/Originate/git-town/src/flows/gitflows"
+	"github.com/Originate/git-town/src/lib/gitlib"
 	"github.com/Originate/git-town/src/steps"
-	"github.com/Originate/git-town/src/util"
-	"github.com/Originate/git-town/src/validation"
 	"github.com/spf13/cobra"
 )
 
@@ -43,16 +40,16 @@ Does not delete perennial branches nor the main branch.`,
 		})
 	},
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		return util.FirstError(
+		return errortools.FirstError(
 			validateMaxArgsFunc(args, 1),
-			git.ValidateIsRepository,
+			gittools.ValidateIsRepository,
 			validateIsConfigured,
 		)
 	},
 }
 
 func getKillConfig(args []string) (result killConfig) {
-	result.InitialBranch = git.GetCurrentBranchName()
+	result.InitialBranch = gitlib.GetCurrentBranchName()
 
 	if len(args) == 0 {
 		result.TargetBranch = result.InitialBranch
@@ -60,19 +57,19 @@ func getKillConfig(args []string) (result killConfig) {
 		result.TargetBranch = args[0]
 	}
 
-	validation.EnsureIsFeatureBranch(result.TargetBranch, "You can only kill feature branches.")
+	workflows.EnsureIsFeatureBranch(result.TargetBranch, "You can only kill feature branches.")
 
-	result.IsTargetBranchLocal = git.HasLocalBranch(result.TargetBranch)
+	result.IsTargetBranchLocal = gittools.HasLocalBranch(result.TargetBranch)
 	if result.IsTargetBranchLocal {
-		prompt.EnsureKnowsParentBranches([]string{result.TargetBranch})
+		gitflows.EnsureKnowsParentBranches([]string{result.TargetBranch})
 	}
 
-	if git.HasRemote("origin") && !git.IsOffline() {
-		script.Fetch()
+	if gittools.HasRemote("origin") && !gittools.IsOffline() {
+		scriptlib.Fetch()
 	}
 
 	if result.InitialBranch != result.TargetBranch {
-		validation.EnsureHasBranch(result.TargetBranch)
+		workflows.EnsureHasBranch(result.TargetBranch)
 	}
 
 	return
@@ -80,23 +77,23 @@ func getKillConfig(args []string) (result killConfig) {
 
 func getKillStepList(config killConfig) (result steps.StepList) {
 	if config.IsTargetBranchLocal {
-		targetBranchParent := git.GetParentBranch(config.TargetBranch)
-		if git.HasTrackingBranch(config.TargetBranch) && !git.IsOffline() {
+		targetBranchParent := gittools.GetParentBranch(config.TargetBranch)
+		if gittools.HasTrackingBranch(config.TargetBranch) && !gittools.IsOffline() {
 			result.Append(&steps.DeleteRemoteBranchStep{BranchName: config.TargetBranch, IsTracking: true})
 		}
 		if config.InitialBranch == config.TargetBranch {
-			if git.HasOpenChanges() {
+			if gittools.HasOpenChanges() {
 				result.Append(&steps.CommitOpenChangesStep{})
 			}
 			result.Append(&steps.CheckoutBranchStep{BranchName: targetBranchParent})
 		}
 		result.Append(&steps.DeleteLocalBranchStep{BranchName: config.TargetBranch, Force: true})
-		for _, child := range git.GetChildBranches(config.TargetBranch) {
+		for _, child := range gittools.GetChildBranches(config.TargetBranch) {
 			result.Append(&steps.SetParentBranchStep{BranchName: child, ParentBranchName: targetBranchParent})
 		}
 		result.Append(&steps.DeleteParentBranchStep{BranchName: config.TargetBranch})
 		result.Append(&steps.DeleteAncestorBranchesStep{})
-	} else if !git.IsOffline() {
+	} else if !gittools.IsOffline() {
 		result.Append(&steps.DeleteRemoteBranchStep{BranchName: config.TargetBranch, IsTracking: false})
 	} else {
 		fmt.Printf("Cannot delete remote branch '%s' in offline mode", config.TargetBranch)
@@ -104,7 +101,7 @@ func getKillStepList(config killConfig) (result steps.StepList) {
 	}
 	result.Wrap(steps.WrapOptions{
 		RunInGitRoot:     true,
-		StashOpenChanges: config.InitialBranch != config.TargetBranch && config.TargetBranch == git.GetPreviouslyCheckedOutBranch(),
+		StashOpenChanges: config.InitialBranch != config.TargetBranch && config.TargetBranch == gittools.GetPreviouslyCheckedOutBranch(),
 	})
 	return
 }

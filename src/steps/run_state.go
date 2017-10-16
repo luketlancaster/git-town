@@ -1,6 +1,6 @@
 package steps
 
-import "github.com/Originate/git-town/src/git"
+import "github.com/Originate/git-town/src/lib/gitlib"
 
 // RunState represents the current state of a Git Town command,
 // including which operations are left to do,
@@ -23,7 +23,7 @@ func (runState *RunState) AddPushBranchStepAfterCurrentBranchSteps() {
 		if !isCheckoutBranchStep(step) {
 			popped.Append(runState.RunStepList.Pop())
 		} else {
-			runState.RunStepList.Prepend(&PushBranchStep{BranchName: git.GetCurrentBranchName()})
+			runState.RunStepList.Prepend(&PushBranchStep{BranchName: gitlib.GetCurrentBranchName()})
 			runState.RunStepList.PrependList(popped)
 			break
 		}
