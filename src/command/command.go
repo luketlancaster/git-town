@@ -5,7 +5,7 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/Originate/git-town/src/stringtools"
+	"github.com/Originate/git-town/src/lib/stringtools"
 )
 
 // Command runs commands on the command line

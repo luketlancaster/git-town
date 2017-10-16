@@ -13,7 +13,7 @@ import (
 
 	"github.com/Originate/git-town/src/command"
 	"github.com/Originate/git-town/src/exit"
-	"github.com/Originate/git-town/src/stringtools"
+	"github.com/Originate/git-town/src/lib/stringtools"
 )
 
 // AddToPerennialBranches adds the given branch as a perennial branch

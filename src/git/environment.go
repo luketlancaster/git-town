@@ -4,7 +4,7 @@ import (
 	"errors"
 
 	"github.com/Originate/git-town/src/command"
-	"github.com/Originate/git-town/src/stringtools"
+	"github.com/Originate/git-town/src/lib/stringtools"
 )
 
 // IsOffline returns whether Git Town is currently in offline mode

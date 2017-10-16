@@ -8,7 +8,7 @@ import (
 	"github.com/Originate/git-town/src/command"
 	"github.com/Originate/git-town/src/dryrun"
 	"github.com/Originate/git-town/src/exit"
-	"github.com/Originate/git-town/src/stringtools"
+	"github.com/Originate/git-town/src/lib/stringtools"
 )
 
 // DoesBranchHaveUnmergedCommits returns whether the branch with the given name

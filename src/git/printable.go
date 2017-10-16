@@ -4,7 +4,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/Originate/git-town/src/stringtools"
+	"github.com/Originate/git-town/src/lib/stringtools"
 )
 
 // GetPrintableMainBranch returns a user printable main branch

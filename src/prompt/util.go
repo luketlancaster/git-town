@@ -8,7 +8,7 @@ import (
 
 	"github.com/Originate/git-town/src/cfmt"
 	"github.com/Originate/git-town/src/exit"
-	"github.com/Originate/git-town/src/stringtools"
+	"github.com/Originate/git-town/src/lib/stringtools"
 	"github.com/fatih/color"
 )
 
