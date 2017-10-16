@@ -3,7 +3,7 @@ This file contains functionality around storing configuration settings
 inside Git's metadata storage for the repository.
 */
 
-package git
+package util
 
 import (
 	"fmt"
@@ -14,7 +14,6 @@ import (
 
 	"github.com/Originate/git-town/src/command"
 	"github.com/Originate/git-town/src/exit"
-	"github.com/Originate/git-town/src/util"
 )
 
 // AddToPerennialBranches adds the given branch as a perennial branch
@@ -55,7 +54,7 @@ func DeleteParentBranch(branchName string) {
 
 // EnsureIsFeatureBranch asserts that the given branch is a feature branch.
 func EnsureIsFeatureBranch(branchName, errorSuffix string) {
-	util.Ensure(IsFeatureBranch(branchName), fmt.Sprintf("The branch '%s' is not a feature branch. %s", branchName, errorSuffix))
+	Ensure(IsFeatureBranch(branchName), fmt.Sprintf("The branch '%s' is not a feature branch. %s", branchName, errorSuffix))
 }
 
 // GetAncestorBranches returns the names of all parent branches for the given branch,
@@ -169,7 +168,7 @@ func HasGlobalConfigurationValue(key string) bool {
 // IsAncestorBranch returns whether the given branch is an ancestor of the other given branch.
 func IsAncestorBranch(branchName, ancestorBranchName string) bool {
 	ancestorBranches := CompileAncestorBranches(branchName)
-	return util.DoesStringArrayContain(ancestorBranches, ancestorBranchName)
+	return DoesStringArrayContain(ancestorBranches, ancestorBranchName)
 }
 
 // HasCompiledAncestorBranches returns whether the Git Town configuration
@@ -200,7 +199,7 @@ func IsMainBranch(branchName string) bool {
 // a perennial branch.
 func IsPerennialBranch(branchName string) bool {
 	perennialBranches := GetPerennialBranches()
-	return util.DoesStringArrayContain(perennialBranches, branchName)
+	return DoesStringArrayContain(perennialBranches, branchName)
 }
 
 // RemoveAllConfiguration removes all Git Town configuration
@@ -210,7 +209,7 @@ func RemoveAllConfiguration() {
 
 // RemoveFromPerennialBranches removes the given branch as a perennial branch
 func RemoveFromPerennialBranches(branchName string) {
-	SetPerennialBranches(util.RemoveStringFromSlice(GetPerennialBranches(), branchName))
+	SetPerennialBranches(RemoveStringFromSlice(GetPerennialBranches(), branchName))
 }
 
 // SetAncestorBranches stores the given list of branches as ancestors
@@ -244,7 +243,7 @@ func SetPullBranchStrategy(strategy string) {
 // ShouldHackPush returns whether the current repository is configured to push
 // freshly created branches up to the origin remote.
 func ShouldHackPush() bool {
-	return util.StringToBool(getLocalConfigurationValueWithDefault("git-town.hack-push-flag", "false"))
+	return StringToBool(getLocalConfigurationValueWithDefault("git-town.hack-push-flag", "false"))
 }
 
 // UpdateOffline updates whether Git Town is in offline mode
