@@ -109,8 +109,8 @@ pkg unicode, var <new script or property> *RangeTable
 
 	var (
 		cldr       = generate("./unicode/cldr", unicode)
-		langint    = generate("./internal/language", cldr)
-		language   = generate("./language", cldr, langint)
+		compact    = generate("./internal/language/compact", cldr)
+		language   = generate("./language", cldr, compact)
 		internal   = generate("./internal", unicode, language)
 		norm       = generate("./unicode/norm", unicode)
 		rangetable = generate("./unicode/rangetable", unicode)
@@ -268,7 +268,7 @@ var goGenRE = regexp.MustCompile("//go:generate[^\n]*\n")
 // copyPackage copies relevant files from a directory in x/text to the
 // destination package directory. The destination package is assumed to have
 // the same name. For each copied file go:generate lines are removed and
-// and package comments are rewritten to the new path.
+// package comments are rewritten to the new path.
 func copyPackage(dirSrc, dirDst, search, replace string) {
 	err := filepath.Walk(dirSrc, func(file string, info os.FileInfo, err error) error {
 		base := filepath.Base(file)

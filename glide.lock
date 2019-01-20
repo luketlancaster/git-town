@@ -1,22 +1,22 @@
 hash: f5bd1db8ca8e8982e8cf72d287a3f662d6bbab1befef075404a9a35ed6a6a668
-updated: 2018-04-09T10:42:46.678258579-07:00
+updated: 2019-01-20T05:57:29.564480753Z
 imports:
 - name: github.com/acarl005/stripansi
   version: 5a71ef0e047df0427e87a79f27009029921f1f9b
 - name: github.com/dustin/go-humanize
-  version: bb3d318650d48840a39aa21a027c6630e198e626
+  version: 9f541cc9db5d55bce703bd99987c9d5cb8eea45e
 - name: github.com/fatih/color
   version: 570b54cabe6b8eb0bc2dfce68d964677d63b5260
 - name: github.com/golang/protobuf
-  version: bbd03ef6da3a115852eaf24c8a1c46aeb39aa175
+  version: 347cf4a86c1cb8d262994d8ef5924d4576c5b331
   subpackages:
   - proto
 - name: github.com/google/go-github
-  version: 88eb4e9dc91cb2db1bbc56c936f1ee39bbe72ba5
+  version: 56cb1dd99043eba2e21c91aa8417d3ba2329259a
   subpackages:
   - github
 - name: github.com/google/go-querystring
-  version: 53e6ce116135b80d037921a7fdd5138cf32d7a8a
+  version: 44c6ddd0a2342c386950e880b658017258da92fc
   subpackages:
   - query
 - name: github.com/inconshreveable/mousetrap
@@ -34,13 +34,13 @@ imports:
 - name: github.com/pkg/errors
   version: 645ef00459ed84a119197bfb8d8205042c6df63d
 - name: github.com/spf13/cobra
-  version: cd30c2a7e91a1d63fd9a0027accf18a681e9d50b
+  version: 7547e83b2d85fd1893c7d76916f67689d761fecb
 - name: github.com/spf13/pflag
-  version: 1ce0cc6db4029d97571db82f85092fccedb572ce
+  version: 24fa6976df40757dce6aea913e7b81ade90530e1
 - name: github.com/spf13/viper
   version: 25b30aa063fc18e48662b86996252eabdcf2f0c7
 - name: golang.org/x/net
-  version: f5dfe339be1d06f81b22525fe34671ee7d2c8904
+  version: ed066c81e75eba56dd9bd2139ade88125b855585
   subpackages:
   - context
   - context/ctxhttp
@@ -48,7 +48,7 @@ imports:
   - html/atom
   - html/charset
 - name: golang.org/x/oauth2
-  version: 921ae394b9430ed4fb549668d7b087601bd60a81
+  version: 5dab4167f31cbd76b407f1486c86b40748bc5073
   subpackages:
   - internal
 - name: golang.org/x/sys
@@ -57,7 +57,7 @@ imports:
   subpackages:
   - unix
 - name: google.golang.org/appengine
-  version: 0a24098c0ec68416ec050f567f75df563d6b231e
+  version: e9657d882bb81064595ca3b56cbe2546bbabf7b1
   subpackages:
   - internal
   - internal/base
@@ -72,8 +72,15 @@ imports:
   - core
   - terminal
 testImports:
+- name: github.com/hpcloud/tail
+  version: a1dbeea552b7c8df4b542c66073e393de198a800
+  subpackages:
+  - ratelimiter
+  - util
+  - watch
+  - winfile
 - name: github.com/onsi/ginkgo
-  version: 9008c7b79f9636c46a0a945141020124702f0ecf
+  version: 505cc352255139defb7371000668063d1161e331
   subpackages:
   - config
   - internal/codelocation
@@ -93,7 +100,7 @@ testImports:
   - reporters/stenographer/support/go-isatty
   - types
 - name: github.com/onsi/gomega
-  version: 49e4233a3b46c26dddd43cf84547cf31c92d0f2b
+  version: 5533ce8a0da374da682cd53d70ddcc54adf1a710
   subpackages:
   - format
   - internal/assertion
@@ -107,7 +114,7 @@ testImports:
   - matchers/support/goraph/util
   - types
 - name: golang.org/x/text
-  version: 0b0b1f509072617b86d90971b51da23cc52694f2
+  version: e6919f6577db79269a6443b9dc46d18f2238fb5d
   subpackages:
   - encoding
   - encoding/charmap
@@ -120,12 +127,17 @@ testImports:
   - encoding/traditionalchinese
   - encoding/unicode
   - internal/language
+  - internal/language/compact
   - internal/tag
   - internal/utf8internal
   - language
   - runes
   - transform
+- name: gopkg.in/fsnotify/fsnotify.v1
+  version: c2828203cd70a50dcccfb2761f8b1f8ceef9a8e9
 - name: gopkg.in/jarcoal/httpmock.v1
-  version: 61bcb58a07522fbdf76a4cb03c57f5a52683d636
+  version: 275e9df93516fc27a998eca24c8f1cca277ce5bf
+- name: gopkg.in/tomb.v1
+  version: c131134a1947e9afd9cecfe11f4c6dff0732ae58
 - name: gopkg.in/yaml.v2
-  version: 7f97868eec74b32b0982dd158a51a446d1da7eb5
+  version: 51d6538a90f86fe93ac480b35f37b2be17fef232
